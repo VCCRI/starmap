@@ -2,14 +2,17 @@ var ViewPort = function() {
     this.pointsDict = {}
 
     this.boundingSphereDict = {}
-
+    
     this.boundingBox = {}
-
+    this.fileData = {}
+    this.NUMOFSP = 10;
+    this.threshhold = 5;
+    this.featuresNum = 0;
+    this.sqrtThreshhold = Math.sqrt(this.threshhold);
     this.sceneEl = document.createElement('a-scene');
-    //this.sceneEl.setAttribute('vr-mode-ui','enabled: false');
-    //this.sceneEl.setAttribute('light','defaultLightEnabled:false');
     this.sceneEl.object3D.background = new THREE.Color( 0x222222 );
-    //this.sceneEl.object3D.remove( this.sceneEl.object3D.children[0]);
+    this.sceneEl.setAttribute( 'keyboard-shortcuts', 'enterVR: false' );
+
     var light = document.createElement('a-entity');
     light.setAttribute('light','type: ambient; color: #fff');
 
@@ -17,8 +20,8 @@ var ViewPort = function() {
 
     var container = this.container = document.createElement('a-entity');
     container.setAttribute('id','container');
-    //container.setAttribute('drag-rotate-component','');
     this.sceneEl.appendChild(container);
+    
 
     var boundingSphereContainer= this.boundingSphereContainer = document.createElement('a-entity');
     boundingSphereContainer.setAttribute('id','boundingSphereContainer');
@@ -29,8 +32,24 @@ var ViewPort = function() {
     var pointContainer= this.pointContainer = document.createElement('a-entity');
     pointContainer.setAttribute('id','pointContainer');
     pointContainer.setAttribute('position','0 0 0');
-    pointContainer.setAttribute("visible",true);
+    pointContainer.setAttribute('visible',true);
     container.appendChild(pointContainer);
+
+
+
+     var pointsEl = this.pointsEl = document.createElement( 'a-entity' );
+    pointsEl.setAttribute('class', 'clickable');
+    pointsEl.setAttribute('id', 'points');
+    pointContainer.appendChild( pointsEl );
+
+
+    var outlierEl= this.outlierEl = document.createElement( 'a-entity' );
+    outlierEl.setAttribute('id', 'outlier');
+    pointContainer.appendChild( outlierEl );
+
+    var axis = this.axis = new Axis(this);
+
+
 
     var cameraWrapperEl = this.cameraWrapperEl = document.createElement('a-entity');
     cameraWrapperEl.setAttribute('position','0 0 0');
@@ -39,67 +58,237 @@ var ViewPort = function() {
 
     var cameraEl = this.cameraEl = document.createElement('a-camera');
     cameraEl.setAttribute('id','camera');
-    cameraEl.setAttribute('keyboardcontrol','');
-    cameraEl.setAttribute('wasd-controls-enabled','false');
-
-    //cameraEl.setAttribute('look-controls-enabled','false');
     
-    var hiddenEl = document.createElement('a-entity');
-    //hiddenEl.setAttribute('position','0.5 1 -2');
-    hiddenEl.setAttribute('position','0 0 -5');
-    hiddenEl.setAttribute('id','hiddenEl');
-    cameraEl.appendChild(hiddenEl);
+    cameraEl.setAttribute('wasd-controls-enabled','false');
+    cameraEl.setAttribute('user-height','0');
+    cameraEl.setAttribute('near','5');
+    
+    this.hiddenChild = new THREE.Group();
+    this.hiddenChild.position.set(2,4,-5.5);
+    cameraEl.object3D.add(this.hiddenChild);
+    
+    var cursorEl = this.cursorEl = document.createElement('a-entity');
+
+    cursorEl.setAttribute('raycaster','interval: 500; objects: .clickable; far:300;');
+    cursorEl.setAttribute('cursor','fuse: true');
+    
+    cursorEl.setAttribute ('position', '0 0 -5.5');
+    cursorEl.setAttribute ('geometry', 'primitive: ring; radiusInner: 0.145; radiusOuter: 0.180;thetaLength: 0; thetaStart: 90');
+    cursorEl.setAttribute ('material', 'color: cyan; shader: flat;transparent:true; opacity:0.7');
+    
+    var fusingStartAnimation = this.fusingStartAnimation = document.createElement('a-animation');
+    fusingStartAnimation.setAttribute('begin','fusing');
+    fusingStartAnimation.setAttribute('attribute','geometry.thetaLength');
+    fusingStartAnimation.setAttribute('fill','forwards');
+    fusingStartAnimation.setAttribute('from','0');
+    fusingStartAnimation.setAttribute('to','360');
+    fusingStartAnimation.setAttribute('dur','1500');   
+    fusingStartAnimation.setAttribute('end','mouseleave');
+    
+    cursorEl.appendChild(fusingStartAnimation);
+
+    
+    
+    var cursorCenter =  this.cursorCenter = document.createElement('a-entity');
+    cursorCenter.setAttribute('position','0 0 0');
+    cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 0.125; radiusInner: 0.075');
+    cursorCenter.setAttribute('material','color: #2ADD2A');
+    cursorEl.appendChild(cursorCenter);
+    //cursorEl.setAttribute('visible',false);
+    this.isVrCursor(false);
+    
+    cameraEl.appendChild(cursorEl);
+
     this.compass = new Compass(cameraEl,container); 
     cameraWrapperEl.appendChild(cameraEl);
-
     this.sceneEl.appendChild(cameraWrapperEl);
 
+    document.querySelector('body').appendChild(this.sceneEl);
 
+    var mouseControl = this.mouseControl = new MouseControl( this );
+  
+    var flatScreenEditor = this.flatScreenEditor = new FlatScreenEditor( this );
     
-   // var vrEditor= this.vrEditor= new VrEditor(viewPort,cameraEl);
-    var flatScreenEditor = this.flatScreenEditor = new FlatScreenEditor(this);
+    var vrEditor= this.vrEditor = new VrEditor(this);
+    var highDemDetail  = this.highDemDetail = new HighDemDetail( this );
+ 
 
-    this.sceneEl.addEventListener("enter-vr",function(){
+   // });
+    
+    var keyboardControl = this.keyboardControl = new KeyboardControl(this);
+    var voiceControl  = this.voiceControl = new VoiceControl(this);
+    var vrControl  = this.vrControl = new VrControl(this);
+    var scope = this;
+    
+
+                
+      
+                
+                // scope.keyboardControl.enableKeyboardControl(true);
+                
+                // scope.voiceControl.init();
+                // //scope.voiceControl.enableVoiceControl(true);
+                
+                // scope.vrControl.init();
+               // scope.vrControl.enableVrControl(true);
+    
+    this.sceneEl.addEventListener('enter-vr',function(){
 
         flatScreenEditor.hideFlatScreenUI();
-        //vrEditor.addVrUI();
+        vrEditor.displayVrUI();
+        mouseControl.enableMouseControl(false);
+        keyboardControl.enableKeyboardControl(false);
+        scope.isVrCursor(true);
+        scope.voiceControl.enableVoiceControl(true);
+        scope.vrControl.enableVrControl(true);
+
+        
     });
 
-    this.sceneEl.addEventListener("exit-vr",function(){
+    this.sceneEl.addEventListener('exit-vr',function(){
         //vrEditor.removeVrUI();
+        vrEditor.hideVrUI();
         flatScreenEditor.displayFlatScreenUI();
-
+        mouseControl.enableMouseControl(true);
+        keyboardControl.enableKeyboardControl(true);
+        scope.isVrCursor(false);
+        scope.voiceControl.enableVoiceControl(false);
+        scope.vrControl.enableVrControl(false);
     });
-    document.querySelector('body').appendChild(this.sceneEl);
+
 
 }
 
 
 
-
-
-
-
 ViewPort.prototype = { 
+    
+    
+    findSurrendingPoints: function(pointIndex, cluster){
+        
+        // find the point
+        
+        var centerPoint = this.fileData[cluster].findPoint(pointIndex);
+        var surrendingPoints = {};
+        var totalPointsLength = 0;
+       // var relativeCluster = [];
+        
+        for ( var [currCluster, points] of Object.entries(this.fileData)) {
+            if( currCluster == -1 ) continue;
+            if( points.boundingSphere.center.distanceTo(centerPoint) - points.boundingSphere.radius > this.sqrtThreshhold ) continue;
+            
+                var l = points.getSurrendingPoints(this.threshhold, centerPoint);
+                if(l.length > 0 ) {
+                    surrendingPoints[currCluster] = l;
+                    totalPointsLength += l.length;
+                }
+            
+        }
+        
+        if(totalPointsLength > this.NUMOFSP) {
+         
+            var deleteNum = totalPointsLength - this.NUMOFSP;
+           // console.log('Needdelete' + deleteNum);
+            var keys =Object.keys( surrendingPoints );
+           //init heap
+            var heap = new Heap((a, b) => b.d - a.d);
+            
+            for (var i = 0 ; i < keys.length ; i += 1 ){
+               
+               var currPoints = surrendingPoints[keys[i]];
+               heap.push( { k: keys[i], d: currPoints[currPoints.length - 1].d } );
+               
+            
+            }
+               
+            for ( ; deleteNum > 0; deleteNum -= 1 ) {
+            
+                var deleteItem = heap.pop();
+                var clusterNeedPop = deleteItem.k;
+                var surrendingCluster = surrendingPoints[clusterNeedPop];
+                surrendingPoints[clusterNeedPop].pop();
+                
+                if(surrendingCluster.length == 0) {
+                    
+                    delete surrendingPoints[clusterNeedPop]; 
+                    continue;
+            
+                }
+            
+                heap.push( { k: clusterNeedPop, d: surrendingCluster[surrendingCluster.length - 1].d } );
+                //
+            }
 
-    initControlUIAndRendering : function( clustersData ) {
+            
+        }
+            
+       this.highDemDetail.showHighDemDetail(surrendingPoints);
+        
+    },
 
-        //var scope = this;
-        this.initRendering( clustersData );
-        this.boundingSphereContainer.setAttribute("visible",true);
+    isVrCursor: function(bool) {
+        
+        
+        var scope = this;
+        
+        scope.cursorEl.setAttribute('visible', bool);
+        
+        var clickHandler = function(evt) {
+            
+            console.log('click',event);
+            var intersection = evt.detail.intersection;
+            scope.findSurrendingPoints(intersection.index,intersection.object.name);
+           
+        } 
+        
+        var mouseLeaveHandler = function(evt) {
+            scope.cursorCenter.setAttribute('material', 'color', '#2ADD2A');
+            scope.cursorEl.setAttribute('geometry', 'thetaLength', '0');
+        }
+        
+        var fusingStartAnimationHandler = function() {
+            scope.cursorCenter.setAttribute('material','color', '#ff0000');
+            console.log('animation started');
+        }
+        
+ 
+        if( bool == true ){
+            
+            scope.cursorEl.addEventListener('mouseleave', mouseLeaveHandler);
+            scope.cursorEl.addEventListener('click', clickHandler);
+            //scope.cursorEl.appendChild(scope.fusingStartAnimation);
+            scope.fusingStartAnimation.addEventListener('animationstart', fusingStartAnimationHandler);
+
+        
+        }
+        else{
+            
+            scope.cursorEl.removeEventListener('mouseleave', mouseLeaveHandler);
+            scope.cursorEl.removeEventListener('click', clickHandler);
+            scope.fusingStartAnimation.removeEventListener('animationstart', fusingStartAnimationHandler);
+            
+        }
+    },
+
+    initControlUIAndRendering : function( ) {
+
+        this.initRendering( );
+        this.boundingSphereContainer.setAttribute('visible',true);
         this.sceneEl.setAttribute('vr-mode-ui','enabled: true');
-        new DisplayDataCommand(this.compass,true);
-        // this.vrEditor.initVrUI();
-        // this.flatScreenEditor.initFlatScreenUI();
+        new DisplayDataCommand(this.compass.compassWrapperEl.object3D,true);
 
     },
 
-    initRendering : function( clustersData ){
-
+    initRendering : function( ){
+        
+        this.mouseControl.enableMouseControl(true);
         var counter = 0;
         var scope = this;
-        var clusterNum = Object.keys(clustersData).length;
-
+        var fileData = scope.fileData;
+        var clusterNum = Object.keys(fileData).length;
+        var outlierEl = this.outlierEl;
+        //console.log(clusterNum);
+        //console.log(fileData);
         var boundingBox = {
             minX: Infinity,
             minY: Infinity,
@@ -108,77 +297,119 @@ ViewPort.prototype = {
             maxY: -Infinity,
             maxZ: -Infinity
         };
+        
+        scope.pointsEl.addEventListener('object3dset', function(evt){ 
 
-        for( var key in clustersData ) {
-            
-            if( clustersData.hasOwnProperty( key ) ) {
+            var id = evt.detail.type;
+            var object = evt.detail.object;
+            var boundingSphere = object.geometry.boundingSphere;
+            scope.pointsDict[id] = evt.detail.object;
+            evt.detail.object.visible = false;
+        
+            renderBoundingSphere( id, boundingSphere, 0);
+        
+        });
+        
+        outlierEl.addEventListener('object3dset', function(evt){ 
 
-                var currCluster = clustersData[key];
-                var pointsEl = document.createElement( 'a-entity' );
-                config.color[key] = '#' + ( '000000' + Math.random().toString( 16 ).slice( 2, 8 ).toUpperCase() ).slice( -6 );
-                console.log(config.color[key]);
-                config.displayCluster[key] = false; 
-                config.displayBoundingSphere[key] = true; 
-
-                pointsEl.setAttribute( 'points', { positions : currCluster.positions , color :  config.color[key] } );
-                pointsEl.setAttribute( 'id', key );
-                pointsEl.setAttribute( 'visible', false );
-                scope.pointContainer.appendChild( pointsEl );
-               
-                pointsEl.addEventListener("loaded", function(evt){ renderBoundingSphere(evt, config.color )} );
-
-                this.pointsDict[key] = pointsEl;
-
+            var id = evt.detail.type;
+            var object = evt.detail.object;
+            var boundingSphere = object.geometry.boundingSphere;
+            console.log(boundingSphere);
+            scope.pointsDict[id] = evt.detail.object;
+            console.log(evt.detail.object);
+            evt.detail.object.visible = false;
+            renderBoundingSphere( id, boundingSphere, 1);
+        
+        });
+        
+        var colorCount = 0;
+        for( var key in fileData ) {
+           
+            if( this.fileData.hasOwnProperty( key ) ) {
+                
+                var currCluster = fileData[key];
+                var id = 'mpoints__'+key;
+                //console.log(key);
+                config.displayCluster[id] = false; 
+                if(key == '-1'){
+                    console.log("outlier");
+                    config.color[id] = '#035A75';
+                    outlierEl.setAttribute( id, { positions: currCluster.positions , size: 1, color: config.color[id], textureSrc: 'null', sizeAttenuation: false } );
+                }else{
+                    config.color[id] = config.defaultColor[colorCount];
+                    config.displayBoundingSphere[id] = true; 
+                    scope.pointsEl.setAttribute( id, { positions: currCluster.positions ,featuresNum: scope.featuresNum, size: 2, color: config.defaultColor[colorCount] } );
+                }
             }
+            colorCount += 1;
+           
         }
+     
 
-        function renderBoundingSphere ( evt, color ){
+        function renderBoundingSphere (id, boundingSphere, outlier ){
             
             counter += 1;
-            var id = evt.detail.target.id;
-            var boundingSphere = evt.detail.target.components.points.getBoundingSphere();
-            var boundingSphereEl = document.createElement( 'a-entity' );
-            console.log("clolor",color);
-            //var randomColor = '#' + ( '000000' + Math.random().toString( 16 ).slice( 2, 8 ).toUpperCase() ).slice( -6 );
-            boundingSphereEl.setAttribute( 'id', 'bounding' + id );
-            boundingSphereEl.setAttribute( 'geometry', 'primitive: sphere; radius: ' + boundingSphere.radius );
-        
-            boundingSphereEl.setAttribute( 'position', boundingSphere.center.x +" "+boundingSphere.center.y+" "+boundingSphere.center.z );
-            boundingSphereEl.setAttribute( 'material', 'transparent:true; opacity: 0.5; color: '+ color[id]);
-     
-            scope.boundingSphereDict[id] = boundingSphereEl;
-            scope.boundingSphereContainer.appendChild( boundingSphereEl );
-
+            if (outlier != 1) {
+                var key = id.replace('mpoints__','');
+                var boundingSphereEl = document.createElement( 'a-entity' );
+    
+                boundingSphereEl.setAttribute( 'id', 'bounding' + id );
+             
+                if( boundingSphere.radius != 0 ) 
+                    boundingSphereEl.setAttribute( 'geometry', 'primitive: sphere; radius: ' + boundingSphere.radius );
+                else boundingSphereEl.setAttribute( 'geometry', 'primitive: sphere; radius: 2' );
+                boundingSphereEl.setAttribute( 'position', boundingSphere.center.x +' '+boundingSphere.center.y+' '+boundingSphere.center.z );
+                boundingSphereEl.setAttribute( 'material', 'transparent:true; opacity: 0.4; color: '+ config.color[id]);
+            
+                fileData[key].boundingSphere = boundingSphere;
+                scope.boundingSphereDict[id] = boundingSphereEl;
+                scope.boundingSphereContainer.appendChild( boundingSphereEl );
+            }
             boundingBox = calculateBoundingBox( boundingBox, boundingSphere );
 
             if (counter == clusterNum) {
 
-                scope.boundingBox = {
-                    width: Math.round((boundingBox.maxX - boundingBox.minX)*1.3),
-                    height: Math.round((boundingBox.maxY - boundingBox.minY)*1.3),
-                    depth: Math.round((boundingBox.maxZ - boundingBox.minZ)*1.3),
-                    center:  {
-                        x: (boundingBox.maxX + boundingBox.minX)/2,
-                        y: (boundingBox.maxY + boundingBox.minY)/2,
-                        z: (boundingBox.maxZ + boundingBox.minZ)/2
-                    }
-                }
+                config.boundingBox = {
+                    width : Math.round((boundingBox.maxX - boundingBox.minX)*1.3),
+                    height : Math.round((boundingBox.maxY - boundingBox.minY)*1.3),
+                    depth : Math.round((boundingBox.maxZ - boundingBox.minZ)*1.3),
+                    maxCoor : Math.max( boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ ),
+                    minCoor : Math.min( boundingBox.minX, boundingBox.minY, boundingBox.minZ ),
+                    center : new THREE.Vector3( (boundingBox.maxX + boundingBox.minX)/2, (boundingBox.maxY + boundingBox.minY)/2, (boundingBox.maxZ + boundingBox.minZ)/2 )
 
+                    
+                }
+                // pointsEl.removeEventListener('object3dset');
+                // outlierEl.removeEventListener('object3dset');
                 //add a bounding box of all cluster
                 // var boundingBoxEl = document.createElement( 'a-entity' );
                 // boundingBoxEl.setAttribute( 'id','boundingBoxEl' );
-                // boundingBoxEl.setAttribute( 'geometry','primitive: box; width: ' + scope.boundingBox.width + '; height: '+ scope.boundingBox.height + '; depth: '+ scope.boundingBox.depth );
-                // boundingBoxEl.setAttribute( 'position', scope.boundingBox.center.x+' '+ scope.boundingBox.center.y+' '+ scope.boundingBox.center.z );
+                // boundingBoxEl.setAttribute( 'geometry','primitive: box; width: ' + config.boundingBox .width + '; height: '+ config.boundingBox .height + '; depth: '+ config.boundingBox .depth );
+                // boundingBoxEl.setAttribute( 'position', config.boundingBox .center.x+' '+ config.boundingBox .center.y+' '+ config.boundingBox .center.z );
                 // boundingBoxEl.setAttribute( 'material', 'transparent:true; opacity: 0.5; color: #abacad' );
                 //boundingBoxEl.setAttribute('drag-rotate-component','');
                // scope.container.appendChild( boundingBoxEl );
-                //var axis = new Axis( scope );
-                var cameraLookatDistance = 1.5*Math.max( scope.boundingBox.width,scope.boundingBox.height,scope.boundingBox.depth );
+                scope.axis.renderAxis(boundingBox);
+                var cameraLookatDistance = 1.5*Math.max( config.boundingBox.width,config.boundingBox.height,config.boundingBox.depth );
                 scope.cameraWrapperEl.setAttribute( 'position','0 0 ' + cameraLookatDistance );
-                scope.flatScreenEditor.addFlatScreenUI();
-    
-
-            }
+                //scope.cursorEl.components.raycaster.refreshObjects();
+                scope.flatScreenEditor.initFlatScreenUI();
+                
+                scope.vrEditor.initVrEditorUI();
+                
+                scope.keyboardControl.init();
+                
+                scope.highDemDetail.init();
+                
+                scope.keyboardControl.enableKeyboardControl(true);
+                
+                scope.voiceControl.init();
+                //scope.voiceControl.enableVoiceControl(true);
+                
+                scope.vrControl.init();
+               // scope.vrControl.enableVrControl(true);
+             }
        
         }
 
@@ -212,36 +443,27 @@ ViewPort.prototype = {
     },
 
     initVrGUI : function( ) {
-        console.log("hello");
+        console.log('hello');
     },
 
     renderingPoints : function( ) {
         //var scope = this;
-        console.log("start to rendering point");
-        this.pointContainer.setAttribute("visible",true);
+        console.log('start to rendering point');
+        this.pointContainer.setAttribute('visible',true);
 
     },
 
     hidePoints : function( ) {
        // var scope = this;
-        console.log("start to rendering point");
-        this.pointContainer.setAttribute("visible",false);
+        this.pointContainer.setAttribute('visible',false);
 
     },  
 
     renderingBoundingSphere : function( ) {
     //var this = this;
-        console.log("start to rendering point");
-        this.pointContainer.setAttribute("visible",true);
-
-    },
-
-    hidePoints : function( ) {
-       // var scope = this;
-        console.log("start to rendering point");
-        this.pointContainer.setAttribute("visible",false);
+        console.log('start to rendering point');
+        this.pointContainer.setAttribute('visible',true);
 
     }
-
 
 }
