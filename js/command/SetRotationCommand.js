@@ -1,8 +1,9 @@
-var DisplayDataCommand = function(object, bool ) {
+var SetRotationCommand = function(object, rotation ) {
     //new changeBoundingSphereColorCommand()
 
     //viewPort.
-    object.visible = bool;
+    
+    object.object3D.rotation.copy( rotation );
     // object.object3D.traverse( function(child){
 
     //     child.visible = bool;

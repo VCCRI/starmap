@@ -4,53 +4,65 @@
     <head>
 
         <title>BioVR</title>
-        <meta name="description" content="BioVR">
+        <meta name="description" content="Star Map">
 
-        <script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
-  
-        <!-- <script type="text/javascript" src="js/libs/aframe.min.js"></script> -->
-
-
+        <script src="js/libs/aframe.min.js"></script>
+        <script src="js/libs/heap.js"></script>
+        <script src="js/libs/annyang.js"></script>
     </head>
-    <style>
-    #dataEditorContainer {
-        position: absolute;
-        top: 0px;
-        left: 10px;
-        z-index: 10;
-    }
 
-</style>
+
+
     <body>   
+    
 
+  <script type="text/javascript" >
+        THREE.ShaderLib.points.vertexShader = 'uniform float size;\n attribute float visible;\nuniform float scale;\n#include <common>\n#include <color_pars_vertex>\n#include <shadowmap_pars_vertex>\n#include <logdepthbuf_pars_vertex>\n#include <clipping_planes_pars_vertex>\nvoid main() {\n\t#include <color_vertex>\n\t#include <begin_vertex>\n\t#include <project_vertex>\n\t#ifdef USE_SIZEATTENUATION\n\t\tgl_PointSize = size * visible *( scale / - mvPosition.z );\n\t#else\n\t\tgl_PointSize = size;\n\t#endif\n\t#include <logdepthbuf_vertex>\n\t#include <clipping_planes_vertex>\n\t#include <worldpos_vertex>\n\t#include <shadowmap_vertex>\n}\n'
+        THREE.ShaderLib.points.fragmentShader = 'uniform vec3 diffuse;\nuniform float opacity;\n#include <common>\n#include <packing>\n#include <color_pars_fragment>\n#include <map_particle_pars_fragment>\n#include <fog_pars_fragment>\n#include <shadowmap_pars_fragment>\n#include <logdepthbuf_pars_fragment>\n#include <clipping_planes_pars_fragment>\nvoid main() {\n\t#include <clipping_planes_fragment>\n\tvec3 outgoingLight = vec3(0.0);\n\tvec4 diffuseColor = vec4( diffuse, opacity );\n\t#include <logdepthbuf_fragment>\n\t#include <map_particle_fragment>\n\t#include <color_fragment>\n\t#include <alphatest_fragment>\n\toutgoingLight = diffuseColor.rgb;\n\tgl_FragColor = vec4( outgoingLight, diffuseColor.a );\n\t#include <premultiplied_alpha_fragment>\n\t#include <tonemapping_fragment>\n\t#include <encodings_fragment>\n\t\#include <fog_fragment>\n\t}\n'
+     </script>
+
+ 
         <script type="text/javascript" src="js/libs/d3.v4.min.js"></script>
         <script type="text/javascript" src="js/libs/dat.gui.min.js"></script>
         <script type="text/javascript" src="js/libs/decimalAdjustment.js"></script>
+        <script type="text/javascript" src="js/libs/dat.GUIVR.js"></script>
+        
         <script type="text/javascript" src="js/components/meshLine.js"></script>
         <script type="text/javascript" src="js/components/line.js"></script>
         <script type="text/javascript" src="js/components/pointsComponent.js"></script>
-        <script type="text/javascript" src="js/components/movement.js"></script>
-        <script type="text/javascript" src="js/components/keyboardControl.js"></script>
+        <script type="text/javascript" src="js/components/points2.js"></script>
+        <script type="text/javascript" src="js/components/mouse-cursor.js"></script>
 
+
+        
         <script type="text/javascript" src="js/command/ChangeColorCommand.js"></script>
         <script type="text/javascript" src="js/command/DisplayDataCommand.js"></script>
         <script type="text/javascript" src="js/command/SetPositionCommand.js"></script>
         <script type="text/javascript" src="js/command/SetRotationCommand.js"></script>    
 
-        <script type="text/javascript" src="js/components/dat.GUIVR.js"></script>
+
+        <script type="text/javascript" src="js/controls/MouseControl.js"></script>
+        <script type="text/javascript" src="js/controls/KeyboardControl.js"></script>
+        <script type="text/javascript" src="js/controls/VoiceControl.js"></script>  
+        <script type="text/javascript" src="js/controls/VrControl.js"></script>
+       <script type="text/javascript" src="js/controls/VoiceControl.js"></script>  
+       
+        <script type="text/javascript" src="js/HighDemDetail.js"></script>
         <script type="text/javascript" src="js/config.js"></script>
         <script type="text/javascript" src="js/Points.js"></script>
+
         <script type="text/javascript" src="js/VrEditor.js"></script>
         <script type="text/javascript" src="js/FlatScreenEditor.js"></script>
         <script type="text/javascript" src="js/ViewPort.js"></script>
 
         <script type="text/javascript" src="js/UploadFile.js"></script>
         <script type="text/javascript" src="js/Axis.js"></script>
-        <script type="text/javascript" src="js/Compass.js"></script>        
+        <script type="text/javascript" src="js/Compass.js"></script>      
+        
+        
         <script>
             var viewPort = new ViewPort();
             var uploadFile = new UploadFile(viewPort);
-
         </script>
 
     </body>
