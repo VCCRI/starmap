@@ -106,7 +106,7 @@
     updateView();
   
     function handleOnPress(p) {
-    //  console.log("109");
+      console.log("109");
       if (group.visible === false) {
         return;
       }
@@ -119,7 +119,7 @@
     }
   
     function handleOnRelease() {
-   //   console.log("122");
+      console.log("122");
       hitscanVolume.position.z = BUTTON_DEPTH * 0.5;
     }
   
@@ -297,7 +297,7 @@
   
       object[propertyName] = state.value;
       //customlize stuff
-      //console.log(object[propertyName],propertyName);
+      console.log(object[propertyName],propertyName);
       if (onChangedCB) {
         //customlize stuff
         onChangedCB( { name:propertyName, value:state.value } );
@@ -570,7 +570,7 @@
           state.open = false;
   
           if (onChangedCB && propertyChanged) {
-            //console.log(object[propertyName],propertyName);
+            console.log(object[propertyName],propertyName);
             onChangedCB(object[propertyName]);
           }
   
@@ -778,7 +778,6 @@
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         textCreator = _ref.textCreator,
         name = _ref.name,
-        color = _ref.color,
         guiAdd = _ref.guiAdd,
         addSlider = _ref.addSlider,
         addDropdown = _ref.addDropdown,
@@ -787,7 +786,7 @@
   
     var width = Layout.FOLDER_WIDTH;
     var depth = Layout.PANEL_DEPTH;
-  // console.log(_ref);
+  
     var state = {
       collapsed: false,
       previousParent: undefined
@@ -815,12 +814,10 @@
     var panel = Layout.createPanel(width, Layout.FOLDER_HEIGHT, depth, true);
     addImpl(panel);
   
-    var descriptorLabel = textCreator.create(name,{color:_ref.color});
+    var descriptorLabel = textCreator.create(name);
     descriptorLabel.position.x = Layout.PANEL_LABEL_TEXT_MARGIN * 1.5;
     descriptorLabel.position.y = -0.03;
     descriptorLabel.position.z = depth;
- 
-   // descriptorLabel.children[0].material.color = new THREE.Color(_ref.color);
     panel.add(descriptorLabel);
   
     var downArrow = Layout.createDownArrow();
@@ -1070,146 +1067,148 @@
   });
   exports.create = create;
   
-var _interaction = require('./interaction');
-
-var _interaction2 = _interopRequireDefault(_interaction);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function create() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      group = _ref.group,
-      panel = _ref.panel;
-
-  var interaction = (0, _interaction2.default)(panel);
-
-  interaction.events.on('onPressed', handleOnPress);
-  interaction.events.on('tick', handleTick);
-  interaction.events.on('onReleased', handleOnRelease);
-
-  var tempMatrix = new THREE.Matrix4();
-  var tPosition = new THREE.Vector3();
-
-  var oldParent = void 0;
-
-  function getTopLevelFolder(group) {
-    var folder = group.folder;
-    while (folder.folder !== folder) {
-      folder = folder.folder;
-    }return folder.parent;
-  }
-
-  function handleTick() {
-    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        input = _ref2.input;
-
-    var folder = getTopLevelFolder(group);
-    if (folder === undefined) {
-      return;
+  var _interaction = require('./interaction');
+  
+  var _interaction2 = _interopRequireDefault(_interaction);
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  
+  function create() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        group = _ref.group,
+        panel = _ref.panel;
+  
+    var interaction = (0, _interaction2.default)(panel);
+  
+    interaction.events.on('onPressed', handleOnPress);
+    interaction.events.on('tick', handleTick);
+    interaction.events.on('onReleased', handleOnRelease);
+  
+    var tempMatrix = new THREE.Matrix4();
+    var tPosition = new THREE.Vector3();
+  
+    var oldParent = void 0;
+  
+    function getTopLevelFolder(group) {
+      var folder = group.folder;
+      while (folder.folder !== folder) {
+        folder = folder.folder;
+      }return folder;
     }
-
-    if (input.mouse) {
-      if (input.pressed && input.selected && input.raycast.ray.intersectPlane(input.mousePlane, input.mouseIntersection)) {
-        if (input.interaction.press === interaction) {
-          folder.position.copy(input.mouseIntersection.sub(input.mouseOffset));
-          return;
-        }
-      } else if (input.intersections.length > 0) {
-        var hitObject = input.intersections[0].object;
-        if (hitObject === panel) {
-          hitObject.updateMatrixWorld();
-          tPosition.setFromMatrixPosition(hitObject.matrixWorld);
-
-          input.mousePlane.setFromNormalAndCoplanarPoint(input.mouseCamera.getWorldDirection(input.mousePlane.normal), tPosition);
-          // console.log( input.mousePlane );
-        }
-      }
-    }
-  }
-
-  function handleOnPress(p) {
-    var inputObject = p.inputObject,
-        input = p.input;
-
-
-    var folder = getTopLevelFolder(group);
-    if (folder === undefined) {
-      return;
-    }
-
-    if (folder.beingMoved === true) {
-      return;
-    }
-
-    if (input.mouse) {
-      if (input.intersections.length > 0) {
-        if (input.raycast.ray.intersectPlane(input.mousePlane, input.mouseIntersection)) {
-          var hitObject = input.intersections[0].object;
-          if (hitObject !== panel) {
-            return;
-          }
-
-          input.selected = folder;
-
-          input.selected.updateMatrixWorld();
-          tPosition.setFromMatrixPosition(input.selected.matrixWorld);
-
-          input.mouseOffset.copy(input.mouseIntersection).sub(tPosition);
-          // console.log( input.mouseOffset );
-        }
-      }
-    } else {
-      tempMatrix.getInverse(inputObject.matrixWorld);
-
-      folder.matrix.premultiply(tempMatrix);
-      folder.matrix.decompose(folder.position, folder.quaternion, folder.scale);
-
-      oldParent = folder.parent;
-      inputObject.add(folder);
-    }
-
-    p.locked = true;
-
-    folder.beingMoved = true;
-
-    input.events.emit('grabbed', input);
-  }
-
-  function handleOnRelease(p) {
-    var inputObject = p.inputObject,
-        input = p.input;
-
-
-    var folder = getTopLevelFolder(group);
-    if (folder === undefined) {
-      return;
-    }
-
-    if (folder.beingMoved === false) {
-      return;
-    }
-
-    if (input.mouse) {
-      input.selected = undefined;
-    } else {
-
-      if (oldParent === undefined) {
+  
+    function handleTick() {
+      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          input = _ref2.input;
+  
+      var folder = getTopLevelFolder(group);
+      if (folder === undefined) {
         return;
       }
-
-      folder.matrix.premultiply(inputObject.matrixWorld);
-      folder.matrix.decompose(folder.position, folder.quaternion, folder.scale);
-      oldParent.add(folder);
-      oldParent = undefined;
+     // console.log("1107");
+      if (input.mouse) {
+        
+        if (input.pressed && input.selected && input.raycast.ray.intersectPlane(input.mousePlane, input.mouseIntersection)) {
+          if (input.interaction.press === interaction) {
+            folder.position.copy(input.mouseIntersection.sub(input.mouseOffset));
+            return;
+          }
+        } else if (input.intersections.length > 0) {
+          var hitObject = input.intersections[0].object;
+          if (hitObject === panel) {
+            hitObject.updateMatrixWorld();
+            tPosition.setFromMatrixPosition(hitObject.matrixWorld);
+  
+            input.mousePlane.setFromNormalAndCoplanarPoint(input.mouseCamera.getWorldDirection(input.mousePlane.normal), tPosition);
+            // console.log( input.mousePlane );
+          }
+        }
+      }
     }
-
-    folder.beingMoved = false;
-
-    input.events.emit('grabReleased', input);
-  }
-
-  return interaction;
-} /**
+  
+    function handleOnPress(p) {
+      console.log("1128");
+      var inputObject = p.inputObject,
+          input = p.input;
+  
+  
+      var folder = getTopLevelFolder(group);
+      if (folder === undefined) {
+        return;
+      }
+  
+      if (folder.beingMoved === true) {
+        return;
+      }
+  
+      if (input.mouse) {
+        if (input.intersections.length > 0) {
+          if (input.raycast.ray.intersectPlane(input.mousePlane, input.mouseIntersection)) {
+            var hitObject = input.intersections[0].object;
+            if (hitObject !== panel) {
+              return;
+            }
+  
+            input.selected = folder;
+  
+            input.selected.updateMatrixWorld();
+            tPosition.setFromMatrixPosition(input.selected.matrixWorld);
+  
+            input.mouseOffset.copy(input.mouseIntersection).sub(tPosition);
+            // console.log( input.mouseOffset );
+          }
+        }
+      } else {
+        tempMatrix.getInverse(inputObject.matrixWorld);
+  
+        folder.matrix.premultiply(tempMatrix);
+        folder.matrix.decompose(folder.position, folder.quaternion, folder.scale);
+  
+        oldParent = folder.parent;
+        inputObject.add(folder);
+      }
+  
+      p.locked = true;
+  
+      folder.beingMoved = true;
+  
+      input.events.emit('grabbed', input);
+    }
+  
+    function handleOnRelease(p) {
+      var inputObject = p.inputObject,
+          input = p.input;
+  
+  
+      var folder = getTopLevelFolder(group);
+      if (folder === undefined) {
+        return;
+      }
+  
+      if (folder.beingMoved === false) {
+        return;
+      }
+  
+      if (input.mouse) {
+        input.selected = undefined;
+      } else {
+  
+        if (oldParent === undefined) {
+          return;
+        }
+  
+        folder.matrix.premultiply(inputObject.matrixWorld);
+        folder.matrix.decompose(folder.position, folder.quaternion, folder.scale);
+        oldParent.add(folder);
+        oldParent = undefined;
+      }
+  
+      folder.beingMoved = false;
+  
+      input.events.emit('grabReleased', input);
+    }
+  
+    return interaction;
+  } /**
     * dat-guiVR Javascript Controller Library for VR
     * https://github.com/dataarts/dat.guiVR
     *
@@ -1449,50 +1448,7 @@ function create() {
     */
     var cursorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444, transparent: true, blending: THREE.AdditiveBlending });
     function createCursor() {
-      // var cursorEl  = document.createElement('a-entity');
-      
-      // var cursorCenter = document.createElement('a-entity');
-      // cursorCenter.setAttribute('position','0 0 0');
-      // cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 2; radiusInner: 1');
-      // cursorCenter.setAttribute('material','color: #2ADD2A');
-    //  cursorCenter.object3D.add(
-        
-        return new THREE.Mesh(new THREE.SphereGeometry(0.06, 4, 4), cursorMaterial);
-      
-    //  cursorEl.object3D.add(cursorCenter.object3D);
-     // 
-      
-     // //cursorEl.object3D.add(new THREE.Mesh(new THREE.SphereGeometry(0.6, 4, 4), cursorMaterial));
-   //   return cursorEl.object3D;
-      
-      //   var cursorEl  = document.createElement('a-entity');
-        
-      //   // cursorEl.setAttribute('raycaster','interval: 500; objects: .clickable; far:300;');
-      //   // cursorEl.setAttribute('cursor','fuse: true');
-        
-      // //  cursorEl.setAttribute ('position', '0 0 -5.1');
-      //   cursorEl.setAttribute ('geometry', 'primitive: ring; radiusInner: 2; radiusOuter: 0.180;thetaLength: 0; thetaStart: 90');
-      //   cursorEl.setAttribute ('material', 'color: cyan; shader: flat;transparent:true; opacity:0.7');
-        
-      //   var fusingStartAnimation = document.createElement('a-animation');
-      //   fusingStartAnimation.setAttribute('begin','fusing');
-      //   fusingStartAnimation.setAttribute('attribute','geometry.thetaLength');
-      //   fusingStartAnimation.setAttribute('fill','forwards');
-      //   fusingStartAnimation.setAttribute('from','0');
-      //   fusingStartAnimation.setAttribute('to','360');
-      //   fusingStartAnimation.setAttribute('dur','1500');   
-      //   fusingStartAnimation.setAttribute('end','mouseleave');
-        
-      //   cursorEl.appendChild(fusingStartAnimation);
-        
-        
-        
-      //   var cursorCenter = document.createElement('a-entity');
-      //   cursorCenter.setAttribute('position','0 0 0');
-      //   cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 4; radiusInner: 0.075');
-      //   cursorCenter.setAttribute('material','color: #2ADD2A');
-      //   cursorEl.appendChild(cursorCenter);
-    //  return cursorEl.object3D;
+      return new THREE.Mesh(new THREE.SphereGeometry(0.006, 4, 4), cursorMaterial);
     }
   
     /*
@@ -1504,11 +1460,9 @@ function create() {
     */
     function createInput() {
       var inputObject = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new THREE.Group();
-      var raycast = null;
-      if( arguments[1] ) raycast = arguments[1];
-      else raycast = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3())
+  
       var input = {
-        raycast: raycast,
+        raycast: new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3()),
         laser: createLaser(),
         cursor: createCursor(),
         object: inputObject,
@@ -1521,6 +1475,7 @@ function create() {
           hover: undefined
         }
       };
+  
       input.laser.add(input.cursor);
   
       return input;
@@ -1585,14 +1540,13 @@ function create() {
         For example...
         document.addEventListener( 'mousedown', function(){ laser.pressed( true ); } );
     */
-    function addInputObject(object, raycaster) {
-      var input = createInput(object,raycaster);
+    function addInputObject(object) {
+      var input = createInput(object);
   
       input.laser.pressed = function (flag) {
         // only pay attention to presses over the GUI
         if (flag && input.intersections.length > 0) {
           input.pressed = true;
-          //console.log(1595)
         } else {
           input.pressed = false;
         }
@@ -1758,11 +1712,10 @@ function create() {
       folder.add( ... ) to create controllers.
     */
   
-    function create(name, color) {
+    function create(name) {
       var folder = (0, _folder2.default)({
         textCreator: textCreator,
         name: name,
-        color : color,
         guiAdd: add,
         addSlider: addSimpleSlider,
         addDropdown: addSimpleDropdown,
@@ -1775,7 +1728,6 @@ function create() {
         hitscanObjects.push.apply(hitscanObjects, _toConsumableArray(folder.hitscan));
       }
   
- // console.log('1733'+'folder',folder);
       return folder;
     }
   
@@ -2530,7 +2482,7 @@ function create() {
     function createText(str, font) {
       var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0xffffff;
       var scale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1.0;
-  //  console.log("2494",str);
+  
   
       var geometry = (0, _threeBmfontText2.default)({
         text: str,
@@ -2566,7 +2518,7 @@ function create() {
           scale = _ref$scale === undefined ? 1.0 : _ref$scale;
   
       var group = new THREE.Group();
-    //  console.log(_ref.color);
+  
       var mesh = createText(str, font, color, scale);
       group.add(mesh);
       group.layout = mesh.geometry.layout;
@@ -3070,10 +3022,7 @@ function create() {
   function createTextLabel(textCreator, str) {
     var width = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.4;
     var depth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0.029;
-    var fgColor = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0xfffff;
-    
-    
-   // var fgColor = 0xff0000;
+    var fgColor = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0xffffff;
     var bgColor = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : Colors.DEFAULT_BACK;
     var scale = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 1.0;
   

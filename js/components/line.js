@@ -5,22 +5,24 @@ AFRAME.registerComponent('line', {
       color: {type: 'color', default: '#74BEC1'},
       opacity: {type: 'number', default: 1},
       visible: {default: true},
-      linewidth:{type:'number',default:3}
+      linewidth:{type:'number',default:20}
     },
   
     multiple: true,
   
     init: function () {
       var data = this.data;
-      //console.log("init line");
-      var material = this.material = new THREE.LineBasicMaterial({
+      var geometry;
+      var material;
+      console.log("init line");
+      material = this.material = new THREE.LineBasicMaterial({
         color: data.color,
         opacity: data.opacity,
-        linewidth: data.linewidth,
+        linewidth: 100,
         transparent: data.opacity < 1,
         visible: data.visible
       });
-      var geometry = this.geometry = new THREE.BufferGeometry();
+      geometry = this.geometry = new THREE.BufferGeometry();
       geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(2 * 3), 3));
   
       this.line = new THREE.Line(geometry, material);

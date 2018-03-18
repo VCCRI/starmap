@@ -19,11 +19,11 @@ AFRAME.registerComponent('points', {
       },
       textureSrc:{
         type:'string',
-        default:"image/whiteBall.png"
+        default:"image/ball.png"
       },
       sizeAttenuation:{
         type:'boolean',
-        default: false
+        default: true
       }
     },
     
@@ -46,14 +46,10 @@ AFRAME.registerComponent('points', {
       var colorsArray = new Float32Array( pointNum * 3 );
 
       var color = new THREE.Color( data.color );
-      
-      var visibleArray = new Float32Array( pointNum);
       for(var i = 0 ; i < pointNum ; i++){
         colorsArray[i*3] = color.r;
         colorsArray[i*3+1] = color.g;
         colorsArray[i*3+2] = color.b;
-        
-        visibleArray[i] = 1;
 
       }
 
@@ -62,13 +58,9 @@ AFRAME.registerComponent('points', {
       geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( data.positions, 3 ) );
       if( data.hasColor == true )
         geometry.addAttribute( 'color', new THREE.BufferAttribute( colorsArray, 3 ) );
-        
-        
-      geometry.addAttribute( 'visible', new THREE.BufferAttribute( visibleArray, 1 ) );
       geometry.computeBoundingSphere();
       this.boundingSphere = geometry.boundingSphere;
       this.points = new THREE.Points( geometry, material );
- 
       this.el.setObject3D( 'mesh', this.points );
       
     },
