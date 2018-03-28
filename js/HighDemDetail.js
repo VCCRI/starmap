@@ -42,6 +42,7 @@ HighDemDetail.prototype = {
             line.visible = false;
             plane.add(line);
             plane.visible = false;
+            plane.class = '';
             
             scope.spritePool.push(plane);
             scope.spritePoolGroup.add(plane);
@@ -84,7 +85,7 @@ HighDemDetail.prototype = {
             currIndex = this.pointsEl.components[cluster].hidePoints(hiddenPoints, this.spritePool, currIndex, quaternion);
             
         }
-
+        console.log(this.spritePool);
         currIndex -= 1;
         
         if( currIndex < this.preIndex ) {
@@ -92,11 +93,21 @@ HighDemDetail.prototype = {
               //  if ( this.spritePool[i].visible == false ) break;
                 this.spritePool[i].visible = false;
                 this.spritePool[i].children[0].visible = false;
+                this.spritePool[i].class = '';
                 
             }
             
         }
         
        this.preIndex = currIndex;
+    },
+    
+    setVisible:function( cluster, bool ){
+        
+        for ( var i = 0 ; i <  this.spritePool.length ; i += 1 ) {
+            if(this.spritePool[i].class == '') break;
+            if (this.spritePool[i].class == cluster) this.spritePool[i].visible = bool;
+        }
+        
     }
 }

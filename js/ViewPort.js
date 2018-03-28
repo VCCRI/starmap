@@ -5,18 +5,39 @@ var ViewPort = function() {
     
     this.boundingBox = {}
     this.fileData = {}
-    this.NUMOFSP = 10;
+    this.NUMOFSP = 20;
     this.threshhold = 5;
     this.featuresNum = 0;
     this.sqrtThreshhold = Math.sqrt(this.threshhold);
     this.sceneEl = document.createElement('a-scene');
     this.sceneEl.object3D.background = new THREE.Color( 0x222222 );
     this.sceneEl.setAttribute( 'keyboard-shortcuts', 'enterVR: false' );
+    this.sceneEl.setAttribute('vr-mode-ui','enabled: false');
 
     var light = document.createElement('a-entity');
     light.setAttribute('light','type: ambient; color: #fff');
 
     this.sceneEl.appendChild(light);
+
+    // create demo UI
+    
+    // logo box
+    
+    var geometry = new THREE.BoxGeometry( 5, 5, 5 );
+    var material = new THREE.MeshBasicMaterial( {color: 0xffffff, wireframe:true} );
+    var cube = new THREE.Mesh( geometry, material );
+    cube.position.set(0, 0, -10);
+    
+    var geometry = new THREE.SphereGeometry( 3, 6, 3 );
+   // var geometry = new THREE.SphereGeometry( 3, 6, 3, 0,6.3,0,3.4 );
+      //  var geometry = new THREE.SphereGeometry( 3, 6, 2, 0,6.3, 0, 1.4 );
+    var logo = this.logo = document.createElement('a-entity');
+    logo.setAttribute('logo','');
+    
+    this.sceneEl.appendChild(logo);
+
+
+    
 
     var container = this.container = document.createElement('a-entity');
     container.setAttribute('id','container');
@@ -60,6 +81,7 @@ var ViewPort = function() {
     cameraEl.setAttribute('id','camera');
     
     cameraEl.setAttribute('wasd-controls-enabled','false');
+    cameraEl.setAttribute('look-controls-enabled','false');
     cameraEl.setAttribute('user-height','0');
     cameraEl.setAttribute('near','5');
     
@@ -106,11 +128,11 @@ var ViewPort = function() {
     document.querySelector('body').appendChild(this.sceneEl);
 
     var mouseControl = this.mouseControl = new MouseControl( this );
-  
+    var highDemDetail  = this.highDemDetail = new HighDemDetail( this );
     var flatScreenEditor = this.flatScreenEditor = new FlatScreenEditor( this );
     
     var vrEditor= this.vrEditor = new VrEditor(this);
-    var highDemDetail  = this.highDemDetail = new HighDemDetail( this );
+
  
 
    // });
@@ -275,15 +297,19 @@ ViewPort.prototype = {
         this.initRendering( );
         this.boundingSphereContainer.setAttribute('visible',true);
         this.sceneEl.setAttribute('vr-mode-ui','enabled: true');
+        this.cameraEl.setAttribute('look-controls-enabled','true');
         new DisplayDataCommand(this.compass.compassWrapperEl.object3D,true);
 
     },
 
     initRendering : function( ){
         
-        this.mouseControl.enableMouseControl(true);
+        
         var counter = 0;
         var scope = this;
+        scope.sceneEl.removeChild(scope.logo);
+        
+    
         var fileData = scope.fileData;
         var clusterNum = Object.keys(fileData).length;
         var outlierEl = this.outlierEl;
@@ -380,16 +406,7 @@ ViewPort.prototype = {
 
                     
                 }
-                // pointsEl.removeEventListener('object3dset');
-                // outlierEl.removeEventListener('object3dset');
-                //add a bounding box of all cluster
-                // var boundingBoxEl = document.createElement( 'a-entity' );
-                // boundingBoxEl.setAttribute( 'id','boundingBoxEl' );
-                // boundingBoxEl.setAttribute( 'geometry','primitive: box; width: ' + config.boundingBox .width + '; height: '+ config.boundingBox .height + '; depth: '+ config.boundingBox .depth );
-                // boundingBoxEl.setAttribute( 'position', config.boundingBox .center.x+' '+ config.boundingBox .center.y+' '+ config.boundingBox .center.z );
-                // boundingBoxEl.setAttribute( 'material', 'transparent:true; opacity: 0.5; color: #abacad' );
-                //boundingBoxEl.setAttribute('drag-rotate-component','');
-               // scope.container.appendChild( boundingBoxEl );
+ 
                 scope.axis.renderAxis(boundingBox);
                 var cameraLookatDistance = 1.5*Math.max( config.boundingBox.width,config.boundingBox.height,config.boundingBox.depth );
                 scope.cameraWrapperEl.setAttribute( 'position','0 0 ' + cameraLookatDistance );
@@ -402,12 +419,14 @@ ViewPort.prototype = {
                 
                 scope.highDemDetail.init();
                 
-                scope.keyboardControl.enableKeyboardControl(true);
-                
                 scope.voiceControl.init();
                 //scope.voiceControl.enableVoiceControl(true);
                 
                 scope.vrControl.init();
+                
+                scope.keyboardControl.enableKeyboardControl(true);
+                scope.mouseControl.enableMouseControl(true);
+                
                // scope.vrControl.enableVrControl(true);
              }
        

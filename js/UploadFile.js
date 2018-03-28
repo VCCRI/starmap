@@ -1,6 +1,6 @@
 var UploadFile = function( viewPort ) {
 
-    var sceneEl = viewPort.sceneEl;
+    var sceneEl = this.sceneEl = viewPort.sceneEl;
     this.PARTICLE_SIZE = 45;
     var clusterNum = this.clusterNum = 0;
     
@@ -28,7 +28,60 @@ var UploadFile = function( viewPort ) {
     uploadFileField.setAttribute("id", "inputFileField");
     uploadFileField.setAttribute("type", "file");
     uploadFileField.setAttribute("style", "visibility:hidden");
-    //uploadFileField.setAttribute("accept", ".txt, .csv");
+    uploadFileField.setAttribute("accept", ".txt, .csv");
+    
+    
+    var sloganDiv = this.sloganDiv = document.createElement('div');
+    sloganDiv.setAttribute('class','sloganDiv');
+    
+    var slogan = this.slogan = document.createElement('h1');
+    slogan.setAttribute('class','h1');
+    slogan.innerHTML = 'Drive Into Your Data With <span style="color:#3e8e41">STARMAP</span>'
+    sloganDiv.appendChild(slogan);
+    
+    
+    var demoDiv = this.demoDiv = document.createElement('div');
+    demoDiv.setAttribute('class','demoDiv');
+    
+    
+    
+    var button = document.createElement('button');
+    button.innerHTML = "Example One";
+    button.setAttribute('class','demoButton');
+    button.addEventListener('click',function( ) {
+        demo('sample_data.csv')
+    })
+    demoDiv.appendChild(button);
+    
+    
+    var button2 = document.createElement('button');
+    
+    button2.innerHTML = "Example Two";
+    button2.setAttribute('class','demoButton')
+    demoDiv.appendChild(button2);
+    
+    
+    var button3 = document.createElement('button');
+    
+    button3.innerHTML = "Example Three";
+    button3.setAttribute('class','demoButton')
+    demoDiv.appendChild(button3);
+    sceneEl.appendChild(demoDiv);
+    sceneEl.appendChild(sloganDiv);
+    
+    function demo(fileName) {
+        
+        d3.csv("sampleData/"+fileName, function(data) {
+        
+            preProcessData(data);
+            gui.destroy();
+            sceneEl.removeChild(demoDiv);
+            sceneEl.removeChild(sloganDiv);
+            viewPort.initControlUIAndRendering( );
+            
+        })
+
+    }
     
     uploadFileField.onchange = function(evt) {
         
@@ -38,9 +91,9 @@ var UploadFile = function( viewPort ) {
 
         reader.onload = function(e) {
             var data = d3.csvParse(reader.result);
-            preProcessData(data)
-            
-            confirmUI();
+
+            if(preProcessData(data)) confirmUI();
+            else uploadFileField.value='';
             
             
             
@@ -63,12 +116,11 @@ var UploadFile = function( viewPort ) {
     //data process, store points to an object
     function preProcessData(data) {
         //error detection
-        // if(!data[0].hasOwnProperty('x') || !data[0].hasOwnProperty('y') || !data[0].hasOwnProperty('z') || !data[0].hasOwnProperty('cluster')) {
-        //     console.log('error');
-        //   uploadFileField.value='';
-        //   // TODO write text on screen
-        //   return false;
-        // }
+        if(!data[0].hasOwnProperty('x') || !data[0].hasOwnProperty('y') || !data[0].hasOwnProperty('z') || !data[0].hasOwnProperty('cluster')) 
+
+          // TODO write text on screen
+          return false;
+        
 
         for(var key in data[0]) {
             
@@ -94,7 +146,8 @@ var UploadFile = function( viewPort ) {
             var p = data[i];
             var index = p.cluster;
             
-            updateNormalizeParams(p);
+            if (!updateNormalizeParams(p))  return false;
+            
 
             
             if (!fileData.hasOwnProperty(index)) {
@@ -127,7 +180,7 @@ var UploadFile = function( viewPort ) {
                 var currParamName = keys[j];
           
                 if ( currParamName == 'x' || currParamName == 'y' || currParamName == 'z') { 
-                    p[currParamName] = normlizeParam(p[currParamName],normalizeParams[currParamName].max,50);
+                    p[currParamName] = normlizeParam(p[currParamName],normalizeParams[currParamName].max,150);
                 }
                 else if(p.cluster != '-1') {
                     p[currParamName] = normlizeFeature(p[currParamName],normalizeParams[currParamName],0.48);
@@ -137,48 +190,48 @@ var UploadFile = function( viewPort ) {
             }
             currCluster.positions.push(p.x,p.y,p.z);
         }
-        
+
     
-    return true;
+        return true;
     }
     
-    function postToApi(data) {
+    // function postToApi(data) {
         
-        var zip = new JSZip();
-        var dataString = convertToString(data);
-        // zip.file("data", convertToString(data));
+    //     var zip = new JSZip();
+    //     var dataString = convertToString(data);
+    //     // zip.file("data", convertToString(data));
         
-        // zip.generateAsync({type:"blob"})
-        // .then(function(content) {
-        //         // see FileSaver.js
-        //         console.log(content);
-        // });
+    //     // zip.generateAsync({type:"blob"})
+    //     // .then(function(content) {
+    //     //         // see FileSaver.js
+    //     //         console.log(content);
+    //     // });
         
-    }
+    // }
     
-    function convertToString(data) {
+    // function convertToString(data) {
         
-        var content = data.columns.join(',') +'\n';
-        var keys = Object.keys(normalizeParams);
+    //     var content = data.columns.join(',') +'\n';
+    //     var keys = Object.keys(normalizeParams);
       
-        var keyLen =keys.length;
-        var j = 0;
-        for( var i = 0 ; i < data.length ; i += 1 ) {
+    //     var keyLen =keys.length;
+    //     var j = 0;
+    //     for( var i = 0 ; i < data.length ; i += 1 ) {
       
-            for( j = 0; j < keyLen-1 ; j += 1 ) {
+    //         for( j = 0; j < keyLen-1 ; j += 1 ) {
           
-                content += data[i][keys[j]] + ',';
-            }
-            content += data[i][keys[j]]+'\n';
+    //             content += data[i][keys[j]] + ',';
+    //         }
+    //         content += data[i][keys[j]]+'\n';
             
-        }
+    //     }
         
 
-        return content;
+    //     return content;
         
         
         
-    }
+    // }
     
     function updateNormalizeParams(p){
         
@@ -186,6 +239,7 @@ var UploadFile = function( viewPort ) {
             
             var val = normalizeParams[key];
             var currVal = parseFloat(p[key]);
+            if (isNaN(currVal)) return false;
             if( currVal > val.max) val.max = currVal;
             if( currVal < val.min) val.min = currVal;
             
@@ -194,6 +248,7 @@ var UploadFile = function( viewPort ) {
             
             
         }
+        return true
         
     }
     
@@ -215,7 +270,10 @@ var UploadFile = function( viewPort ) {
         var fileUploaded = function (){
             //boundingBoxEl.setAttribute( 'visible', false );
             gui.destroy();
+            sceneEl.removeChild(demoDiv);
+            sceneEl.removeChild(sloganDiv);
             viewPort.initControlUIAndRendering( );
+            //location.reload();
         }
 
         var obj = { startToExplore : fileUploaded };

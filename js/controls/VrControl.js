@@ -15,14 +15,14 @@ function setSpriteScale(spritePool, preScale, newScale ) {
 var VrControl = function( viewPort ) {
         //this.guiEl = vrEditor.guiEl;
         this.preTime = 0;
-        this.MOVESPEED = 0.5;
-        this.ROTATESPEED = 1;
+        this.MOVESPEED = 2.5;
+        this.ROTATESPEED = 1.5;
         this.SCALESPEED = 0.02;
         this.tween = undefined;
         this.unitVector = new THREE.Vector3( 0, 1, 0 );
         this.preKey = 0;
         this.viewPort = viewPort;
-        this.MAXSCALE = 10;
+        this.MAXSCALE = 8;
         this.MINSCALE = 0.5;
         this.timeThreshold = 20;
 }
@@ -244,77 +244,79 @@ var VrControl = function( viewPort ) {
             }
             
             else if(map[85] && scope.preKey != 85 ){ // a zoom in 
-            
-                if(scope.preKey != 0 && scope.tween ) scope.tween.stop();
-                scope.tween = new TWEEN.Tween()
-                .repeat(Infinity)
-                .onUpdate(function(){
+                if ( preScale + scope.SCALESPEED < scope.MAXSCALE) {
+                    if(scope.preKey != 0 && scope.tween ) scope.tween.stop();
+                    scope.tween = new TWEEN.Tween()
+                    .repeat(Infinity)
+                    .onUpdate(function(){
+                        
+                        var now = new Date().getTime();
+                        if(now-scope.preTime < scope.timeThreshold) {map = {}; return;}
+                        scope.preTime = now;
+                        var newScale = preScale + scope.SCALESPEED;
+                        if(newScale > scope.MAXSCALE) {
+                            scope.tween.stop();
+                            scope.preKey = 70;
+                        }
+                        // scale point 
+                        for ( var i = 0; i< points.children.length;i += 1 ){
+                            points.children[i].scale.set(newScale,newScale,newScale);
+                        }
+                        // scale outlier
+                        if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
+                        boundingSphere.scale.set(newScale,newScale,newScale);
+                        axis.scale.set(newScale,newScale,newScale);
+                        setSpriteScale(spritePool.children , preScale, newScale);
+                        
+                        preScale = newScale;
+    
+                        
+                    })
+                    .onStart(function(){
+                        scope.preTime = new Date().getTime();
+                    })
+                    .start(); 
                     
-                    var now = new Date().getTime();
-                    if(now-scope.preTime < scope.timeThreshold) {map = {}; return;}
-                    scope.preTime = now;
-                    var newScale = preScale + scope.SCALESPEED;
-                    if(newScale > scope.MAXSCALE) {
-                        scope.tween.stop();
-                        scope.preKey = 70;
-                    }
-                    // scale point 
-                    for ( var i = 0; i< points.children.length;i += 1 ){
-                        points.children[i].scale.set(newScale,newScale,newScale);
-                    }
-                    // scale outlier
-                    if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
-                    boundingSphere.scale.set(newScale,newScale,newScale);
-                    axis.scale.set(newScale,newScale,newScale);
-                    setSpriteScale(spritePool.children , preScale, newScale);
-                    
-                    preScale = newScale;
-
-                    
-                })
-                .onStart(function(){
-                    scope.preTime = new Date().getTime();
-                })
-                .start(); 
-                
-                scope.preKey = 85;
+                    scope.preKey = 85;
+                }
                 map = {};
             }
              else if(map[72] && scope.preKey != 72 ){ // h zoom out
-            
-                if(scope.preKey != 0 && scope.tween ) scope.tween.stop();
-                scope.tween = new TWEEN.Tween()
-                .repeat(Infinity)
-                .onUpdate(function(){
+                if ( preScale + scope.SCALESPEED > scope.MINSCALE) {
+                    if(scope.preKey != 0 && scope.tween ) scope.tween.stop();
+                    scope.tween = new TWEEN.Tween()
+                    .repeat(Infinity)
+                    .onUpdate(function(){
+                        
+                        var now = new Date().getTime();
+                        if(now-scope.preTime < scope.timeThreshold) {map = {}; return;}
+                        scope.preTime = now;
+                        var newScale = preScale - scope.SCALESPEED;
+                        if(newScale < scope.MINSCALE) {
+                            scope.tween.stop();
+                            scope.preKey = 82;
+                        }
+                        // scale point 
+                        for ( var i = 0; i< points.children.length;i ++ ){
+                            points.children[i].scale.set(newScale,newScale,newScale);
+                        }
+                        // scale outlier
+                        if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
+                        boundingSphere.scale.set(newScale,newScale,newScale);
+                        axis.scale.set(newScale,newScale,newScale);
+                        setSpriteScale(spritePool.children , preScale, newScale);
+                        
+                        preScale = newScale;
+    
+                        
+                    })
+                    .onStart(function(){
+                        scope.preTime = new Date().getTime();
+                    })
+                    .start(); 
                     
-                    var now = new Date().getTime();
-                    if(now-scope.preTime < scope.timeThreshold) {map = {}; return;}
-                    scope.preTime = now;
-                    var newScale = preScale - scope.SCALESPEED;
-                    if(newScale < scope.MINSCALE) {
-                        scope.tween.stop();
-                        scope.preKey = 82;
-                    }
-                    // scale point 
-                    for ( var i = 0; i< points.children.length;i ++ ){
-                        points.children[i].scale.set(newScale,newScale,newScale);
-                    }
-                    // scale outlier
-                    if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
-                    boundingSphere.scale.set(newScale,newScale,newScale);
-                    axis.scale.set(newScale,newScale,newScale);
-                    setSpriteScale(spritePool.children , preScale, newScale);
-                    
-                    preScale = newScale;
-
-                    
-                })
-                .onStart(function(){
-                    scope.preTime = new Date().getTime();
-                })
-                .start(); 
-                
-                scope.preKey = 72;
+                    scope.preKey = 72;
+                }
                 map = {};
             }
             //85 70// 72 82

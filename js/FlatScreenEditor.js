@@ -9,9 +9,39 @@ var FlatScreenEditor = function (viewPort) {
     this.container = viewPort.container.object3D;
     this.cameraWrapperEl = viewPort.cameraWrapperEl;
     this.raycaster = viewPort.cursorEl.components.raycaster;
+    this.highDemDetail = viewPort.highDemDetail;
   
     //console.log(this.raycaster);
+     // gamepad helper
+    var keyboardHelpPanel = this.keyboardHelpPanel = document.createElement('a-entity');
+    keyboardHelpPanel.setAttribute("geometry","primitive:plane;height: 4; width: 8");
+    keyboardHelpPanel.setAttribute("material","color:#AAAAAA;transparent:true; opacity:0.7");
+    keyboardHelpPanel.setAttribute("position","0 0 -5.1");
+    keyboardHelpPanel.setAttribute("scale","0 0 0");
     
+    var keyboardHelpPopUp = document.createElement('a-animation');
+    keyboardHelpPopUp.setAttribute('begin', 'keyboardhelp');
+    keyboardHelpPopUp.setAttribute('attribute', 'scale');
+    keyboardHelpPopUp.setAttribute('to', '1 1 1');
+    keyboardHelpPopUp.setAttribute('dur', '1000');
+    keyboardHelpPanel.appendChild(keyboardHelpPopUp);
+   
+   
+    var keyboardHelpDisappear = document.createElement('a-animation');
+    keyboardHelpDisappear.setAttribute('begin', 'keyboardhelpend');
+    keyboardHelpDisappear.setAttribute('attribute', 'scale');
+    keyboardHelpDisappear.setAttribute('to', '0 0 0');
+    keyboardHelpDisappear.setAttribute('dur', '500');
+    keyboardHelpPanel.appendChild(keyboardHelpDisappear);
+    
+    
+    var gpgeometry = new THREE.PlaneGeometry( 8,4 );
+    var gptexture = new THREE.TextureLoader().load('image/keyboard2.png');
+    var gpmaterial = new THREE.MeshBasicMaterial( {map: gptexture,color:0xffffff, side: THREE.FrontSide, alphaTest:0.5} );
+    var gptext = this.gptext =  new THREE.Mesh( gpgeometry, gpmaterial );
+    gptext.position.set(-0.1,0,0.01);
+    keyboardHelpPanel.object3D.add(gptext);
+    this.cameraEl.appendChild(keyboardHelpPanel);
 
 }
 
@@ -28,6 +58,7 @@ FlatScreenEditor.prototype = {
             for( var key in config.displayCluster ) {
                 config.displayCluster[key] = isDisplay;
                 new DisplayDataCommand( viewPort.pointsDict[key], isDisplay );
+                scope.highDemDetail.setVisible(key, isDisplay );
             }
  
         });
@@ -39,6 +70,7 @@ FlatScreenEditor.prototype = {
                 
                 config.displayBoundingSphere[key] = isDisplay;
                 new DisplayDataCommand( viewPort.boundingSphereDict[key].object3D, isDisplay );
+          
             }
         });
 
@@ -53,6 +85,8 @@ FlatScreenEditor.prototype = {
 
             clusterFolder.add( config.displayCluster, cluster ).name( 'Display Points' ).listen( ).onChange( function ( isDisplay ) {
                 new DisplayDataCommand( viewPort.pointsDict[this.property], isDisplay );
+                scope.highDemDetail.setVisible(this.property, isDisplay);
+    
             });
             if(name != '-1') {
                 clusterFolder.add( config.displayBoundingSphere, cluster ).name( 'Display Bounding' ).listen( ).onChange(
@@ -74,7 +108,36 @@ FlatScreenEditor.prototype = {
         // console.log(config.featureMap);
 
         }
+        
+        var helpStarted = false;    
+        var keyboardHelp =  {
+            help: function(){
+                if (helpStarted) return;
+                helpStarted = true;
+                scope.keyboardHelpPanel.emit('keyboardhelp');
+                
+                setTimeout(function () {
+                    
+                    helpStarted = false;
+                    scope.keyboardHelpPanel.emit('keyboardhelpend');
+                    
+                },5000);
+            }
+            
+        }
+       
+        scope.settingGUI.add(keyboardHelp, 'help' ).name( "Help" );
+        //window.location.reload(true);
 
+
+
+        var exitParam = {
+            exit : function() { 
+                window.location.reload(true);
+            }
+        }
+        
+        scope.settingGUI.add(exitParam,'exit').name('Exit');
     },
 
     removeFlatScreenUI : function ( ) {

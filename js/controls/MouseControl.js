@@ -37,7 +37,7 @@ var MouseControl = function ( viewPort ) {
 
 		mouse.set( ( point.x * 2 ) - 1, - ( point.y * 2 ) + 1 );
 		raycaster.setFromCamera( mouse, viewPort.cameraEl.components.camera.camera);
-
+        //TODO
 		return raycaster.intersectObjects( objects );
 
 	}

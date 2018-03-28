@@ -5,13 +5,71 @@
 
         <title>BioVR</title>
         <meta name="description" content="Star Map">
-
+        <link rel="icon" href="image/logo5.png">
         <script src="js/libs/aframe.min.js"></script>
         <script src="js/libs/heap.js"></script>
         <script src="js/libs/annyang.js"></script>
     </head>
 
+    <style type="text/css">
+    
+        .h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 300;
+            position: relative;
+            display: block;
+            z-index: 9999;
+            line-height:2.8rem;
+            margin: 10px;
+          
+            
+        }
+        .demoButton{
+        
+            background-color: #3c3c3c;
+            border: 1px solid #3c3c3c;
+            color: white; /* White text */
+            cursor: pointer;
+            min-width: 150px;
+            min-height: 50px;
+            position: relative;
+            margin-left:55px;
+            z-index: 9999;
+   
+            
+        
+        }
+        .demoDiv button:hover {
+            background-color: #3e8e41;
+        }
+        
+        .demoDiv{
+            font-family: sans-serif,monospace;
+            font-size: 13px;
+            width: 100%;
+            font-weight: 200;
+            line-height: 16px;
+            height: 10%;
+            position: absolute;
+            right: 20px;
+            bottom: 90px;
+            text-align: center;
+        }
+        .sloganDiv{
+            font-family: sans-serif,monospace;
+            font-size: 13px;
+            width: 100%;
+            font-weight: 200;
+            line-height: 16px;
+            height: 10%;
+            position: absolute;
+            top:100px;
+            text-align: center;
+        }
 
+
+    </style>
 
     <body>   
     
@@ -26,13 +84,14 @@
         <script type="text/javascript" src="js/libs/dat.gui.min.js"></script>
         <script type="text/javascript" src="js/libs/decimalAdjustment.js"></script>
         <script type="text/javascript" src="js/libs/dat.GUIVR.js"></script>
+        <script type="text/javascript" src="js/libs/GUIParticleSystem.js"></script>
         
         <script type="text/javascript" src="js/components/meshLine.js"></script>
         <script type="text/javascript" src="js/components/line.js"></script>
         <script type="text/javascript" src="js/components/pointsComponent.js"></script>
         <script type="text/javascript" src="js/components/points2.js"></script>
         <script type="text/javascript" src="js/components/mouse-cursor.js"></script>
-
+        <script type="text/javascript" src="js/components/logo.js"></script>
 
         
         <script type="text/javascript" src="js/command/ChangeColorCommand.js"></script>
@@ -45,7 +104,7 @@
         <script type="text/javascript" src="js/controls/KeyboardControl.js"></script>
         <script type="text/javascript" src="js/controls/VoiceControl.js"></script>  
         <script type="text/javascript" src="js/controls/VrControl.js"></script>
-       <script type="text/javascript" src="js/controls/VoiceControl.js"></script>  
+        <script type="text/javascript" src="js/controls/VoiceControl.js"></script>  
        
         <script type="text/javascript" src="js/HighDemDetail.js"></script>
         <script type="text/javascript" src="js/config.js"></script>
@@ -58,8 +117,7 @@
         <script type="text/javascript" src="js/UploadFile.js"></script>
         <script type="text/javascript" src="js/Axis.js"></script>
         <script type="text/javascript" src="js/Compass.js"></script>      
-        
-        
+
         <script>
             var viewPort = new ViewPort();
             var uploadFile = new UploadFile(viewPort);

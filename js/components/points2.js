@@ -155,6 +155,7 @@ AFRAME.registerComponent('mpoints', {
           currSprite.material.color = this.color;
           currSprite.material.needsUpdate = true;
           currSprite.visible = true;
+          currSprite.class = this.attrName;
           currSprite.quaternion.copy( quaternion );
           poolIndex += 1;
           visibleArray[indexes] = 0;

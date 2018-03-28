@@ -10,11 +10,44 @@ var VrEditor = function(viewPort) {
     this.guiEl = document.createElement('a-entity');  
     this.viewPort = viewPort;
     this.guiContainer = this.guiEl.object3D;
+    this.cameraEl = viewPort.cameraEl;
     this.cameraWrapperEl = viewPort.cameraWrapperEl;
     this.guiContainer.add(this.gui);
  //   this.initPositionOffset = {x: 2, y: 2, z: 5.5};
     this.unitVector = new THREE.Vector3(0, 1, 0);
     this.hiddenChild = viewPort.hiddenChild;
+    
+    // gamepad helper
+    var gamepadHelpPanel = this.gamepadHelpPanel = document.createElement('a-entity');
+    gamepadHelpPanel.setAttribute("geometry","primitive:plane;height: 4; width: 7");
+    gamepadHelpPanel.setAttribute("material","color:#AAAAAA;transparent:true; opacity:0.7");
+    gamepadHelpPanel.setAttribute("position","0 0 -5.1");
+    gamepadHelpPanel.setAttribute("scale","0 0 0");
+    
+    var gamepadHelpPopUp = document.createElement('a-animation');
+    gamepadHelpPopUp.setAttribute('begin', 'gamepadhelp');
+    gamepadHelpPopUp.setAttribute('attribute', 'scale');
+    gamepadHelpPopUp.setAttribute('to', '1 1 1');
+    gamepadHelpPopUp.setAttribute('dur', '1000');
+    gamepadHelpPanel.appendChild(gamepadHelpPopUp);
+   
+   
+    var gamepadHelpDisappear = document.createElement('a-animation');
+    gamepadHelpDisappear.setAttribute('begin', 'gamepadhelpend');
+    gamepadHelpDisappear.setAttribute('attribute', 'scale');
+    gamepadHelpDisappear.setAttribute('to', '0 0 0');
+    gamepadHelpDisappear.setAttribute('dur', '500');
+    gamepadHelpPanel.appendChild(gamepadHelpDisappear);
+    
+    
+    var gpgeometry = new THREE.PlaneGeometry( 4, 4);
+    var gptexture = new THREE.TextureLoader().load('image/gamepad.png');
+    var gpmaterial = new THREE.MeshBasicMaterial( {map: gptexture,color:0xffffff, side: THREE.FrontSide, alphaTest:0.5} );
+    var gptext = this.gptext =  new THREE.Mesh( gpgeometry, gpmaterial );
+    gptext.position.set(-0.1,0,0.01);
+    gamepadHelpPanel.object3D.add(gptext);
+    
+    this.cameraEl.appendChild(gamepadHelpPanel);
 }
 
 VrEditor.prototype = {
@@ -129,10 +162,29 @@ VrEditor.prototype = {
             var name = i + 1;
             featureMapFolder.add(config.featureMap[i] , Object.keys(config.featureMap[i])[0] ).name( name + " " );
         }
-            
+        
         scope.gui.addFolder( featureMapFolder );
-        var b = scope.viewPort.cameraEl;
-        var a = scope.viewPort.cameraWrapperEl;
+        
+        var helpStarted = false;    
+        var gamePadHelp =  {
+            help: function(){
+                if (helpStarted) return;
+                helpStarted = true;
+                scope.gamepadHelpPanel.emit('gamepadhelp');
+                
+                setTimeout(function () {
+                    
+                    helpStarted = false;
+                    scope.gamepadHelpPanel.emit('gamepadhelpend');
+                    
+                },5000);
+            }
+            
+        }
+       
+        scope.gui.add(gamePadHelp, 'help' ).name( "Help" );
+        // var b = scope.viewPort.cameraEl;
+        // var a = scope.viewPort.cameraWrapperEl;
       
 
         window.addEventListener( 'keydown', function( e ) {
@@ -147,7 +199,7 @@ VrEditor.prototype = {
             }else if(map[71]){
                 scope.guiEl.emit("releaseMenu");
                 map = {};
-            }else if(map[85]) {
+            }else if(map[86]) {
                 scope.resetUIPoistion();
                 
             }
@@ -160,7 +212,7 @@ VrEditor.prototype = {
             //console.log('end');
         });
 
-        a.addEventListener('componentchanged', function (evt) { 
+        scope.cameraWrapperEl.addEventListener('componentchanged', function (evt) { 
             
             if ( evt.detail.name == 'position' ) {
                 var newPos = evt.detail.newData;
@@ -175,14 +227,12 @@ VrEditor.prototype = {
         })
         //
     
-
-        b.addEventListener('componentchanged', function (evt) {
+        var quanternion = scope.cameraEl.object3D.quaternion;
+        scope.cameraEl.addEventListener('componentchanged', function (evt) {
+            
             if ( evt.detail.name !== 'rotation' ) return;
-                var degRotation =  evt.detail.newData;
-                var cameraRotation = { x: THREE.Math.degToRad(degRotation.x), y: THREE.Math.degToRad(degRotation.y), z: THREE.Math.degToRad(degRotation.z) };
-                scope.guiContainer.rotation.x = cameraRotation.x;
-                scope.guiContainer.rotation.y = cameraRotation.y;
-                scope.guiContainer.rotation.z = cameraRotation.z;
+             scope.guiContainer.quaternion.copy( quanternion );
+
         })
 
 
