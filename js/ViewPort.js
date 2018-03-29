@@ -358,7 +358,7 @@ ViewPort.prototype = {
                 var id = 'mpoints__'+key;
                 //console.log(key);
                 config.displayCluster[id] = false; 
-                if(key == '-1'){
+                if(key == -1){
                     console.log("outlier");
                     config.color[id] = '#035A75';
                     outlierEl.setAttribute( id, { positions: currCluster.positions , size: 1, color: config.color[id], textureSrc: 'null', sizeAttenuation: false } );

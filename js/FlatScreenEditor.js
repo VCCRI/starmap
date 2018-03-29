@@ -88,7 +88,7 @@ FlatScreenEditor.prototype = {
                 scope.highDemDetail.setVisible(this.property, isDisplay);
     
             });
-            if(name != '-1') {
+            if(name != -1) {
                 clusterFolder.add( config.displayBoundingSphere, cluster ).name( 'Display Bounding' ).listen( ).onChange(
                      function ( isDisplay ) {
                         new DisplayDataCommand( viewPort.boundingSphereDict[this.property].object3D, isDisplay );

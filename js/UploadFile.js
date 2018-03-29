@@ -49,15 +49,17 @@ var UploadFile = function( viewPort ) {
     button.innerHTML = "Example One";
     button.setAttribute('class','demoButton');
     button.addEventListener('click',function( ) {
-        demo('sample_data.csv')
+        demo('10k_data.csv')
     })
     demoDiv.appendChild(button);
     
     
     var button2 = document.createElement('button');
-    
     button2.innerHTML = "Example Two";
     button2.setAttribute('class','demoButton')
+    button2.addEventListener('click',function( ) {
+        demo('250k_data.csv')
+    })
     demoDiv.appendChild(button2);
     
     
@@ -65,6 +67,9 @@ var UploadFile = function( viewPort ) {
     
     button3.innerHTML = "Example Three";
     button3.setAttribute('class','demoButton')
+    button3.addEventListener('click',function( ) {
+        demo('300k_data.csv')
+    })
     demoDiv.appendChild(button3);
     sceneEl.appendChild(demoDiv);
     sceneEl.appendChild(sloganDiv);
@@ -182,7 +187,7 @@ var UploadFile = function( viewPort ) {
                 if ( currParamName == 'x' || currParamName == 'y' || currParamName == 'z') { 
                     p[currParamName] = normlizeParam(p[currParamName],normalizeParams[currParamName].max,150);
                 }
-                else if(p.cluster != '-1') {
+                else if(p.cluster != -1) {
                     p[currParamName] = normlizeFeature(p[currParamName],normalizeParams[currParamName],0.48);
                     currCluster.features[currParamName].push(p[currParamName]);
                 }
