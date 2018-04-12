@@ -116,7 +116,7 @@ var ViewPort = function() {
     cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 0.125; radiusInner: 0.075');
     cursorCenter.setAttribute('material','color: #2ADD2A');
     cursorEl.appendChild(cursorCenter);
-    //cursorEl.setAttribute('visible',false);
+
     this.isVrCursor(false);
     
     cameraEl.appendChild(cursorEl);
@@ -133,27 +133,13 @@ var ViewPort = function() {
     
     var vrEditor= this.vrEditor = new VrEditor(this);
 
- 
 
-   // });
-    
     var keyboardControl = this.keyboardControl = new KeyboardControl(this);
     var voiceControl  = this.voiceControl = new VoiceControl(this);
     var vrControl  = this.vrControl = new VrControl(this);
     var scope = this;
     
 
-                
-      
-                
-                // scope.keyboardControl.enableKeyboardControl(true);
-                
-                // scope.voiceControl.init();
-                // //scope.voiceControl.enableVoiceControl(true);
-                
-                // scope.vrControl.init();
-               // scope.vrControl.enableVrControl(true);
-    
     this.sceneEl.addEventListener('enter-vr',function(){
 
         flatScreenEditor.hideFlatScreenUI();
@@ -257,7 +243,7 @@ ViewPort.prototype = {
         
         var clickHandler = function(evt) {
             
-            console.log('click',event);
+
             var intersection = evt.detail.intersection;
             scope.findSurrendingPoints(intersection.index,intersection.object.name);
            
@@ -270,7 +256,7 @@ ViewPort.prototype = {
         
         var fusingStartAnimationHandler = function() {
             scope.cursorCenter.setAttribute('material','color', '#ff0000');
-            console.log('animation started');
+         
         }
         
  

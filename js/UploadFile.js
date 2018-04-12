@@ -21,8 +21,9 @@ var UploadFile = function( viewPort ) {
     }
     //init GUI
     var gui = new dat.GUI({ width: 275, closeOnTop:true, name:'Upload File' } );
-
-
+    // var loader = document.createElement('div');
+    // loader.setAttribute('class','loader');
+    // sceneEl.appendChild(loader);
     //Load CSV file
     var uploadFileField = document.createElement("input");
     uploadFileField.setAttribute("id", "inputFileField");
@@ -82,6 +83,7 @@ var UploadFile = function( viewPort ) {
             gui.destroy();
             sceneEl.removeChild(demoDiv);
             sceneEl.removeChild(sloganDiv);
+            console.log('end');
             viewPort.initControlUIAndRendering( );
             
         })
@@ -95,11 +97,13 @@ var UploadFile = function( viewPort ) {
         var reader = new FileReader();
 
         reader.onload = function(e) {
+
+            console.log('start');
             var data = d3.csvParse(reader.result);
 
             if(preProcessData(data)) confirmUI();
             else uploadFileField.value='';
-            
+            console.log('end');
             
             
         }
@@ -279,6 +283,7 @@ var UploadFile = function( viewPort ) {
             sceneEl.removeChild(sloganDiv);
             viewPort.initControlUIAndRendering( );
             //location.reload();
+           
         }
 
         var obj = { startToExplore : fileUploaded };

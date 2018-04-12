@@ -49,14 +49,45 @@ HighDemDetail.prototype = {
         
         }
         
+
+var copyTransform = (function(){
+    var scratchMat = new THREE.Matrix4();
+    return function(source, destination)
+    {
+        var scratchMat = new THREE.Matrix4();
+        destination.matrix.copy(source.matrixWorld);
+        destination.applyMatrix(scratchMat.getInverse(destination.parent.matrixWorld));     
+    }
+    })();
         // camera = viewPort.cameraEl.object3D;
         scope.viewPort.cameraEl.addEventListener('componentchanged',function(evt){
         
         if ( evt.detail.name != 'rotation') return;
+
+        cameM = scope.viewPort.cameraEl.object3D.quaternion.clone();
+        //console.log(scope.viewPort.cameraEl.object3D.quaternion
+        //console.log(cameM)
+     
+        parM = scope.container.quaternion.clone();
+        parM.inverse();
+        cameM.multiply(parM);
+       // console.log(cameM)
+       // var quaternion = new THREE.Quaternion().multiplyQuaternions();
         for (var j = 0; j < scope.NUMOFSP ; j += 1) {
             
             if(scope.spritePool[j].visible == false) continue;
-                scope.spritePool[j].quaternion.copy( quanternion );
+                // scope.spritePool[j].rotation.x = cameM.x-parM.x;
+                // scope.spritePool[j].rotation.y = cameM.y-parM.y;
+                // scope.spritePool[j].rotation.z = -parM.z;
+                //console.log(currRotation)
+                //.sub(parM).add(cameM)
+                //scope.spritePool[j].rotation.copy(cameM)
+
+                // var scratchMat = new THREE.Matrix4();
+                // scope.spritePool[j].matrix.copy(cameM);
+                // scope.spritePool[j].applyMatrix(scratchMat.getInverse(scope.spritePool[j].parent.matrixWorld)); 
+
+                scope.spritePool[j].quaternion.copy( cameM );
                 // sprite.quaternion.copy( scope.cameraEl.object3D.quaternion );
             }
         })
@@ -75,14 +106,21 @@ HighDemDetail.prototype = {
         var currIndex = 0;
         
         var keys = Object.keys(this.pointsEl.components);
-        var quaternion = this.viewPort.cameraEl.object3D.quaternion;
+
+        cameM = this.viewPort.cameraEl.object3D.quaternion.clone();
+        //console.log(scope.viewPort.cameraEl.object3D.quaternion
+        //console.log(cameM)
+     
+        parM = this.container.quaternion.clone();
+        parM.inverse();
+        cameM.multiply(parM);
         for( var i = 0 ; i < keys.length ; i += 1 ) {
           
             var cluster = keys[i];
             if( this.pointsEl.components[cluster].id == undefined ) continue;
             var id = cluster.replace( 'mpoints__','');
             var hiddenPoints = points[id];
-            currIndex = this.pointsEl.components[cluster].hidePoints(hiddenPoints, this.spritePool, currIndex, quaternion);
+            currIndex = this.pointsEl.components[cluster].hidePoints(hiddenPoints, this.spritePool, currIndex, cameM);
             
         }
         console.log(this.spritePool);
