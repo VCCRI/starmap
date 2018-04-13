@@ -1,12 +1,36 @@
-function setSpriteScale(spritePool, preScale, newScale ) {
+
+function setSpriteScale(spritePool, dumyPool, preScale, newScale ) {
     
     for ( var i = 0; i < spritePool.length ; i += 1 ) {
         
         if( spritePool[i].visible == false ) break;
-        var pos = spritePool[i].position;
+        var pos = dumyPool[i].position;
         pos.x = pos.x / preScale * newScale;
         pos.y = pos.y / preScale * newScale;
         pos.z = pos.z / preScale * newScale;
+ 
+        spritePool[i].position.copy(dumyPool[i].getWorldPosition())
+        
+    }
+}
+
+var prePos = new THREE.Vector3(0,0,0)
+function setSpriteRotate(spritePool,dumyPool ) {
+    
+    for ( var i = 0; i < spritePool.length ; i += 1 ) {
+        //console.log(spritePool[i])
+        if( spritePool[i].visible == false ) break;
+  
+        spritePool[i].position.copy(dumyPool[i].getWorldPosition())
+   
+        //spritePool[i].rotateOnWorldAxis(axis,newRotation)
+        
+        // console.log(spritePool[i][1].getWorldPosition())
+        // console.log(spritePool[i][0].position)
+        // var pos = spritePool[i].position;
+        // pos.x = pos.x / preScale * newScale;
+        // pos.y = pos.y / preScale * newScale;
+        // pos.z = pos.z / preScale * newScale;
         
     }
 }
@@ -51,8 +75,9 @@ KeyboardControl.prototype = {
         var boundingSphere = scope.boundingSphere;
         var axis = scope.axis;
         var outlier = scope.outlier.children[0];
-        var spritePool = scope.viewPort.highDemDetail.spritePoolGroup;
-      
+        var spritePool = scope.viewPort.highDemDetail.spritePool;
+        var dumyPool = scope.viewPort.highDemDetail.dumyPool;
+        var spritePoolGroup = scope.viewPort.highDemDetail.spritePoolGroup;
         
         
         
@@ -86,6 +111,8 @@ KeyboardControl.prototype = {
                 var rotate = container.getAttribute('rotation');
                 rotate.y -= scope.ROTATESPEED;
                 container.setAttribute('rotation', rotate.x+' '+rotate.y+ ' '+rotate.z);
+                container.object3D.updateMatrixWorld();
+                setSpriteRotate(spritePool,dumyPool);
                 map = {};
 
             }
@@ -95,6 +122,9 @@ KeyboardControl.prototype = {
                 var rotate = container.getAttribute('rotation');
                 rotate.y += scope.ROTATESPEED;
                 container.setAttribute('rotation', rotate.x+' '+rotate.y+ ' '+rotate.z);
+                console.log('rotate')
+                container.object3D.updateMatrixWorld();
+                setSpriteRotate(spritePool,dumyPool);
                 map = {};
 
             }
@@ -104,6 +134,8 @@ KeyboardControl.prototype = {
                 var rotate = container.getAttribute('rotation');
                 rotate.x -= scope.ROTATESPEED;
                 container.setAttribute('rotation', rotate.x+' '+rotate.y+ ' '+rotate.z);
+                container.object3D.updateMatrixWorld();
+                setSpriteRotate(spritePool,dumyPool);
                 map = {};
 
             }
@@ -113,6 +145,8 @@ KeyboardControl.prototype = {
                 var rotate = container.getAttribute('rotation');
                 rotate.x += scope.ROTATESPEED;
                 container.setAttribute('rotation', rotate.x+' '+rotate.y+ ' '+rotate.z);
+                container.object3D.updateMatrixWorld();
+                setSpriteRotate(spritePool,dumyPool);
                 map = {};
 
             }
@@ -185,7 +219,7 @@ KeyboardControl.prototype = {
                 if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
                 boundingSphere.scale.set(newScale,newScale,newScale);
                 axis.scale.set(newScale,newScale,newScale);
-                setSpriteScale(spritePool.children , preScale, newScale);
+                 setSpriteScale(spritePool, dumyPool, preScale, newScale )
                 
                 preScale = newScale;
                 map = {};
@@ -202,7 +236,7 @@ KeyboardControl.prototype = {
                 if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
                 boundingSphere.scale.set(newScale,newScale,newScale);
                 axis.scale.set(newScale,newScale,newScale);
-                setSpriteScale(spritePool.children, preScale, newScale);
+                 setSpriteScale(spritePool, dumyPool, preScale, newScale )
                 //spritePool.scale.set(newScale,newScale,newScale);
                 preScale = newScale;
                 map = {};
