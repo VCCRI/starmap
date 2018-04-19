@@ -15,7 +15,7 @@ var UploadFile = function( viewPort ) {
     //init GUI
     var gui = new dat.GUI({ width: 275, closeOnTop:true, name:'Upload File' } );
     var loader = document.createElement('div');
-    loader.setAttribute('id','loader');
+    loader.setAttribute('class','loading');
     sceneEl.appendChild(loader);
     //Load CSV file
     var uploadFileField = document.createElement("input");
