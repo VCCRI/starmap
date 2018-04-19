@@ -72,13 +72,13 @@ var UploadFile = function( viewPort ) {
         
         d3.text("sampleData/"+fileName, function(data) {
     
-            
+            alert('start')
             lines = data.split(/\r\n|\n/g);
 
             detectFeatures(lines[0]);
 
             convertToMatrix(lines);
-          
+          alert('end')
           //  a  = nj.array(lines);
 
              
@@ -87,7 +87,7 @@ var UploadFile = function( viewPort ) {
             gui.destroy();
             sceneEl.removeChild(demoDiv);
             sceneEl.removeChild(sloganDiv);
-            console.log('end');
+            
             viewPort.initControlUIAndRendering( );
             
         })
@@ -138,12 +138,12 @@ var UploadFile = function( viewPort ) {
             
             else njMatrix = njMatrix.subtract(currFeature.min).divide(currFeature.max-currFeature.min).multiply(0.48)
             currFeature.data = njMatrix.tolist();
-          //  ((value-range.min)/range.range)*newRange)
+       
         }
       
-        console.log(normalizeParams)
+
         prepareRenderingData(clusterRecord,keys);
-          console.log(fileData )
+
         return true;
     }
 
@@ -154,15 +154,11 @@ var UploadFile = function( viewPort ) {
         features.splice(features.indexOf('Y'), 1);
         features.splice(features.indexOf('Z'), 1);
         viewPort.featuresNum = features.length;
-        // var xIndex = normalizeParams['CLUSTER'].index;
-        // var yIndex = normalizeParams['CLUSTER'].index;
-        // var zIndex = normalizeParams['CLUSTER'].index;
 
         for (var i = 0; i < clusterRecord.length; i+=1 ) {
     
             currCluster = fileData[clusterRecord[i]];
-            // console.log(normalizeParams['X'])
-            // break
+
             currCluster.positions.push(normalizeParams['X'].data[i],normalizeParams['Y'].data[i],normalizeParams['Z'].data[i] )
             for ( var feature of features) {
                 //console.log(feature);
