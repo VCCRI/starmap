@@ -18,19 +18,9 @@ var prePos = new THREE.Vector3(0,0,0)
 function setSpriteRotate(spritePool,dumyPool ) {
     
     for ( var i = 0; i < spritePool.length ; i += 1 ) {
-        //console.log(spritePool[i])
+
         if( spritePool[i].visible == false ) break;
-  
         spritePool[i].position.copy(dumyPool[i].getWorldPosition())
-   
-        //spritePool[i].rotateOnWorldAxis(axis,newRotation)
-        
-        // console.log(spritePool[i][1].getWorldPosition())
-        // console.log(spritePool[i][0].position)
-        // var pos = spritePool[i].position;
-        // pos.x = pos.x / preScale * newScale;
-        // pos.y = pos.y / preScale * newScale;
-        // pos.z = pos.z / preScale * newScale;
         
     }
 }
@@ -61,17 +51,12 @@ KeyboardControl.prototype = {
         
     
         var scope = this;
-        // var MOVESPEED = scope.MOVESPEED;
-        // var preKey = 0;
-        // var preTime;
+
         var preScale = 1;
         var container = scope.container;
         var cameraWrapper = scope.viewPort.cameraWrapperEl.object3D;
         var camera = scope.viewPort.cameraEl.object3D;
-        
-        var points = scope.viewPort.pointsEl.object3D;
-       // var points = scope.pointContainer.children[0];
-        
+        var points = scope.viewPort.pointsEl.object3D;        
         var boundingSphere = scope.boundingSphere;
         var axis = scope.axis;
         var outlier = scope.outlier.children[0];
@@ -122,7 +107,6 @@ KeyboardControl.prototype = {
                 var rotate = container.getAttribute('rotation');
                 rotate.y += scope.ROTATESPEED;
                 container.setAttribute('rotation', rotate.x+' '+rotate.y+ ' '+rotate.z);
-                console.log('rotate')
                 container.object3D.updateMatrixWorld();
                 setSpriteRotate(spritePool,dumyPool);
                 map = {};
