@@ -11,14 +11,7 @@ var UploadFile = function( viewPort ) {
     var pointContainer =  viewPort.pointContainer;
     var boundingSphereContainer = viewPort.boundingSphereContainer;
     var fileData = viewPort.fileData;
-    var boundingBox = this.boundingBox = {
-        minX: Infinity,
-        minY: Infinity,
-        minZ: Infinity,
-        maxX: -Infinity,
-        maxY: -Infinity,
-        maxZ: -Infinity,
-    }
+
     //init GUI
     var gui = new dat.GUI({ width: 275, closeOnTop:true, name:'Upload File' } );
     // var loader = document.createElement('div');
@@ -77,9 +70,20 @@ var UploadFile = function( viewPort ) {
     
     function demo(fileName) {
         
-        d3.csv("sampleData/"+fileName, function(data) {
-        
-            preProcessData(data);
+        d3.text("sampleData/"+fileName, function(data) {
+    
+            
+            lines = data.split(/\r\n|\n/g);
+
+            detectFeatures(lines[0]);
+
+            convertToMatrix(lines);
+          
+          //  a  = nj.array(lines);
+
+             
+            //console.log(data);
+            // preProcessData(data);
             gui.destroy();
             sceneEl.removeChild(demoDiv);
             sceneEl.removeChild(sloganDiv);
@@ -87,6 +91,126 @@ var UploadFile = function( viewPort ) {
             viewPort.initControlUIAndRendering( );
             
         })
+
+    }
+
+    function convertToMatrix ( rows ) {
+        var keys = Object.keys(normalizeParams);
+        var clusterIndex  = keys.indexOf('CLUSTER');
+        keys.splice(clusterIndex, 1);
+        var clusterColumnNum = normalizeParams['CLUSTER'].index;
+        var clusterRecord = [];
+
+      
+        for (var i = 1 ; i < rows.length -1 ; i += 1) {
+
+            var columns = rows[i].split(",");
+
+            var newCluster = columns[clusterColumnNum];
+            clusterRecord.push(newCluster);
+            if (!fileData.hasOwnProperty(newCluster)) {
+                fileData[newCluster] = new Points();
+                for (var key of keys) {
+                    if(key == 'X' || key == 'Y' || key == 'Z' ) continue;
+                    fileData[newCluster].features[key] = [];
+                }
+            }
+
+            if (columns.length == 0) continue;
+
+            for ( var j = 0; j < keys.length ; j += 1 ) {
+                var currFeature = normalizeParams[keys[j]];
+                var currVal = parseFloat(columns[currFeature.index]);
+                currFeature.data.push(currVal);
+                if (isNaN(currVal)) {console.log("has NAN value "+keys[j]+" "+i);return false;}
+                if( currVal > currFeature.max)  currFeature.max = currVal;
+                if( currVal < currFeature.min)  currFeature.min = currVal;
+            }
+
+        }
+
+        for ( var i = 0; i < keys.length ; i += 1 ) {
+            var currFeature = normalizeParams[keys[i]];
+            njMatrix = nj.array(currFeature.data);
+            if ( keys[i] == "X" ||  keys[i] == "Y" || keys[i] == "Z" )
+                njMatrix = njMatrix.divide(currFeature.max).multiply(150)
+                
+            
+            else njMatrix = njMatrix.subtract(currFeature.min).divide(currFeature.max-currFeature.min).multiply(0.48)
+            currFeature.data = njMatrix.tolist();
+          //  ((value-range.min)/range.range)*newRange)
+        }
+      
+        console.log(normalizeParams)
+        prepareRenderingData(clusterRecord,keys);
+          console.log(fileData )
+        return true;
+    }
+
+
+    function prepareRenderingData( clusterRecord,features ) {
+ 
+        features.splice(features.indexOf('X'), 1);
+        features.splice(features.indexOf('Y'), 1);
+        features.splice(features.indexOf('Z'), 1);
+        viewPort.featuresNum = features.length;
+        // var xIndex = normalizeParams['CLUSTER'].index;
+        // var yIndex = normalizeParams['CLUSTER'].index;
+        // var zIndex = normalizeParams['CLUSTER'].index;
+
+        for (var i = 0; i < clusterRecord.length; i+=1 ) {
+    
+            currCluster = fileData[clusterRecord[i]];
+            // console.log(normalizeParams['X'])
+            // break
+            currCluster.positions.push(normalizeParams['X'].data[i],normalizeParams['Y'].data[i],normalizeParams['Z'].data[i] )
+            for ( var feature of features) {
+                //console.log(feature);
+                if(clusterRecord[i] != -1) {
+                    currCluster.features[feature].push(normalizeParams[feature].data[i]);
+                }
+            }
+
+        }
+
+
+        
+    }
+
+
+
+
+    function detectFeatures( headerRow ) {
+        var headerList = headerRow.toUpperCase().split(",");
+        if(headerList.indexOf('X') == -1 || headerList.indexOf('Y') == -1 || headerList.indexOf('Z') == -1 || headerList.indexOf('CLUSTER') == -1) 
+        {
+            // console.log(headerList.indexOf('X') )
+            // console.log(headerList.indexOf('Y') )
+            // console.log(headerList.indexOf('Z') )
+            // console.log(headerList[9]== 'CLUSTER')
+            console.log(headerList)
+            return false;
+        }
+        for( var i = 0 ; i < headerList.length ; i += 1 ) {
+            var currFeature = headerList[i];
+            if( currFeature.length == 0 || currFeature == '""' ) continue;
+            if( currFeature != 'X' && currFeature !='Y' && currFeature != 'Z' && currFeature != 'CLUSTER' ) {
+
+                var feature = {};
+                feature[currFeature] = function(){};
+                config.featureMap.push(feature);
+
+            }
+            normalizeParams[currFeature] = {};
+            normalizeParams[currFeature].data = [];
+            normalizeParams[currFeature].index = i;
+            normalizeParams[currFeature].max = -Infinity;
+            normalizeParams[currFeature].min = Infinity;
+
+
+        }
+        console.log(normalizeParams)
+        return true;
 
     }
     
@@ -200,47 +324,11 @@ var UploadFile = function( viewPort ) {
             currCluster.positions.push(p.x,p.y,p.z);
         }
 
-    
+        console.log(fileData)
         return true;
     }
     
-    // function postToApi(data) {
-        
-    //     var zip = new JSZip();
-    //     var dataString = convertToString(data);
-    //     // zip.file("data", convertToString(data));
-        
-    //     // zip.generateAsync({type:"blob"})
-    //     // .then(function(content) {
-    //     //         // see FileSaver.js
-    //     //         console.log(content);
-    //     // });
-        
-    // }
-    
-    // function convertToString(data) {
-        
-    //     var content = data.columns.join(',') +'\n';
-    //     var keys = Object.keys(normalizeParams);
-      
-    //     var keyLen =keys.length;
-    //     var j = 0;
-    //     for( var i = 0 ; i < data.length ; i += 1 ) {
-      
-    //         for( j = 0; j < keyLen-1 ; j += 1 ) {
-          
-    //             content += data[i][keys[j]] + ',';
-    //         }
-    //         content += data[i][keys[j]]+'\n';
-            
-    //     }
-        
-
-    //     return content;
-        
-        
-        
-    // }
+ 
     
     function updateNormalizeParams(p){
         
