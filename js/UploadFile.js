@@ -72,18 +72,13 @@ var UploadFile = function( viewPort ) {
         
         d3.text("sampleData/"+fileName, function(data) {
     
-            alert('start')
+     
             lines = data.split(/\r\n|\n/g);
 
             detectFeatures(lines[0]);
 
             convertToMatrix(lines);
-          alert('end')
-          //  a  = nj.array(lines);
 
-             
-            //console.log(data);
-            // preProcessData(data);
             gui.destroy();
             sceneEl.removeChild(demoDiv);
             sceneEl.removeChild(sloganDiv);
@@ -141,7 +136,6 @@ var UploadFile = function( viewPort ) {
        
         }
       
-
         prepareRenderingData(clusterRecord,keys);
 
         return true;
@@ -218,12 +212,35 @@ var UploadFile = function( viewPort ) {
 
         reader.onload = function(e) {
 
-            console.log('start');
-            var data = d3.csvParse(reader.result);
+            data = reader.result;
+            
+            lines = data.split(/\r\n|\n/g);
 
-            if(preProcessData(data)) confirmUI();
-            else uploadFileField.value='';
-            console.log('end');
+            if (detectFeatures(lines[0])){
+
+                if(convertToMatrix(lines)){
+                   confirmUI();
+      
+
+
+                }
+            }
+            
+
+            uploadFileField.value='';
+            
+
+            // gui.destroy();
+            // sceneEl.removeChild(demoDiv);
+            // sceneEl.removeChild(sloganDiv);
+
+            // viewPort.initControlUIAndRendering( );
+            // console.log(reader.result);
+            // var data = d3.csvParse(reader.result);
+
+            // if(preProcessData(data)) confirmUI();
+            // else uploadFileField.value='';
+            // console.log('end');
             
             
         }
