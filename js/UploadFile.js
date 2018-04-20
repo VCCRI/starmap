@@ -33,7 +33,7 @@ var UploadFile = function( viewPort ) {
     
     var slogan = this.slogan = document.createElement('h1');
     slogan.setAttribute('class','h1');
-    slogan.innerHTML = 'Drive Into Your Data With <span style="color:#3e8e41">STARMAP</span>'
+    slogan.innerHTML = '<span style="color:#3e8e41">STARMAP</span>: Immersive 3D Visualisation of Single Cell Data Using Virtual Reality'
     sloganDiv.appendChild(slogan);
     
     var demoDiv = this.demoDiv = document.createElement('div');
