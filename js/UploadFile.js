@@ -70,7 +70,7 @@ var UploadFile = function( viewPort ) {
     function demo(fileName) {
         loader.style.display='block';
         d3.text("sampleData/"+fileName, function(data) {
-            alert('start parsing')
+            //alert('start parsing')
             lines = data.split(/\r\n|\n/g);
             detectFeatures(lines[0]);
             convertToMatrix(lines);

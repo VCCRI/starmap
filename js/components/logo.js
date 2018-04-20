@@ -24,7 +24,7 @@ AFRAME.registerComponent('logo', {
         var hbtexture = new THREE.TextureLoader().load('image/texture3.png');
         var hbmaterial = new THREE.MeshBasicMaterial( {map: hbtexture,color:0xffffff, side: THREE.FrontSide, alphaTest:0.5} );
         var sprite = this.sprite = new THREE.Mesh( hbgeometry, hbmaterial );
-        this.sprite.position.set(0, -0.5, -6);
+        this.sprite.position.set(0, 0, -6);
         
         
         
@@ -46,7 +46,7 @@ AFRAME.registerComponent('logo', {
 				verticalSpeed: 0.5,
 				timeScale: 1
 			};
-			this.particleSystem.position.set(0,-0.5,-30)
+			this.particleSystem.position.set(0,0,-30)
 			this.el.setObject3D('mesh',this.particleSystem);
             this.el.setObject3D('mesh2', this.sprite);
     },
