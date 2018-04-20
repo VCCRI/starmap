@@ -394,7 +394,7 @@ ViewPort.prototype = {
                 }
  
                 scope.axis.renderAxis(boundingBox);
-                var cameraLookatDistance = 1.5*Math.max( config.boundingBox.width,config.boundingBox.height,config.boundingBox.depth );
+                var cameraLookatDistance = 1.2*Math.max( config.boundingBox.width,config.boundingBox.height,config.boundingBox.depth );
                 scope.cameraWrapperEl.setAttribute( 'position','0 0 ' + cameraLookatDistance );
                 //scope.cursorEl.components.raycaster.refreshObjects();
                 scope.flatScreenEditor.initFlatScreenUI();

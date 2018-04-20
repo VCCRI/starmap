@@ -4,7 +4,7 @@ var VrEditor = function(viewPort) {
     this.sceneEl = viewPort.sceneEl;
     this.scene = this.sceneEl.object3D;
     this.gui = dat.GUIVR.create( 'Settings' );
-    
+    this.keydown = 0;
     // console.log(this.gui);
     //       this.gui.dom.setAttribute('class', 'clickable');
     this.guiEl = document.createElement('a-entity');  
@@ -58,12 +58,6 @@ VrEditor.prototype = {
         var cameraPosition = cameraWrapperEl.object3D.position;
         scope.viewPortCamera = scope.viewPort.cameraEl.object3D.getObjectByProperty( "type", "PerspectiveCamera" );
         var gazeInput = dat.GUIVR.addInputObject( scope.viewPortCamera, scope.viewPort.cursorEl.components.raycaster.raycaster );
-        
-
-
-       // scope.scene.add( gazeInput.cursor );
-        
-      //  gazeInput.cursor.position.set(0, 0, -5.1)
 
         ['pressMenu']
         .forEach( function(e){
@@ -130,39 +124,41 @@ VrEditor.prototype = {
         for( var cluster in config.color ) { 
             
             var name = cluster.replace( 'mpoints__','' );
-            if( name != -1 ) var folderName = 'Cluster ' + name;
-            else var folderName = 'Outliers';
-            var clusterFolder = dat.GUIVR.create( folderName, config.color[cluster] );
-            clusterFolder.add( config.displayCluster, cluster ).name( 'Display Points' ).listen( ).onChange( function( isDisplay ) {
+            if( name != -1 ) var currCluster = 'Cluster ' + name;
+            else var currCluster = 'Outliers';
+            //var clusterFolder = dat.GUIVR.create( folderName, config.color[cluster] );
+            scope.gui.add( config.displayCluster, cluster  ).name( 'Display '+currCluster,config.color[cluster] ).listen( ).onChange( function( isDisplay ) {
                 //console.log(isDisplay)
                  new DisplayDataCommand( scope.viewPort.pointsDict[isDisplay.name], isDisplay.value );
                            
  
             });
-             if(name != -1) {
-            clusterFolder.add( config.displayBoundingSphere, cluster ).name( 'Display Bounding' ).listen( ).onChange(
-                 function( isDisplay ) {
-                     //console.log(isDisplay)
-                      new DisplayDataCommand( scope.viewPort.boundingSphereDict[isDisplay.name].object3D, isDisplay.value );
+            //  if(name != -1) {
+            // clusterFolder.add( config.displayBoundingSphere, cluster ).name( 'Display Bounding' ).listen( ).onChange(
+            //      function( isDisplay ) {
+            //          //console.log(isDisplay)
+            //           new DisplayDataCommand( scope.viewPort.boundingSphereDict[isDisplay.name].object3D, isDisplay.value );
              
-                }
-            );
-             }
+            //     }
+            // );
+            //  }
 
-            scope.gui.addFolder( clusterFolder );
+           // scope.gui.addFolder( clusterFolder );
            
     
         }
         
         
         var featureMapFolder = dat.GUIVR.create( 'Feature Map', '#FFFFFF' );
-        
+
+  
+
         for ( var i = 0 ; i < config.featureMap.length ; i += 1 ) {
             
             var name = i + 1;
             featureMapFolder.add(config.featureMap[i] , Object.keys(config.featureMap[i])[0] ).name( name + " " );
         }
-        
+
         scope.gui.addFolder( featureMapFolder );
         
         var helpStarted = false;    
@@ -194,10 +190,12 @@ VrEditor.prototype = {
             map[e.keyCode] = e.type == 'keydown';
             
             if(map[79]){
-              scope.guiEl.emit("pressMenu");
-              map = {};
+                scope.guiEl.emit("pressMenu");
+                scope.keydown = 1
+                map = {};
             }else if(map[71]){
                 scope.guiEl.emit("releaseMenu");
+                scope.keydown = 0
                 map = {};
             }else if(map[86]) {
                 scope.resetUIPoistion();
@@ -207,10 +205,6 @@ VrEditor.prototype = {
             
     })
     
-        scope.viewPort.fusingStartAnimation.addEventListener('animationend', function(){
-            
-            //console.log('end');
-        });
 
         scope.cameraWrapperEl.addEventListener('componentchanged', function (evt) { 
             
@@ -231,7 +225,8 @@ VrEditor.prototype = {
         scope.cameraEl.addEventListener('componentchanged', function (evt) {
             
             if ( evt.detail.name !== 'rotation' ) return;
-             scope.guiContainer.quaternion.copy( quanternion );
+            if( scope.keydown == 0 )
+            scope.guiContainer.quaternion.copy( quanternion );
 
         })
 

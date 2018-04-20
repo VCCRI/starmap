@@ -106,7 +106,7 @@
     updateView();
   
     function handleOnPress(p) {
-    //  console.log("109");
+    //  //console.log("109");
       if (group.visible === false) {
         return;
       }
@@ -119,7 +119,7 @@
     }
   
     function handleOnRelease() {
-   //   console.log("122");
+   //   //console.log("122");
       hitscanVolume.position.z = BUTTON_DEPTH * 0.5;
     }
   
@@ -144,6 +144,7 @@
     };
   
     group.name = function (str) {
+      //console.log(147+str)
       descriptorLabel.updateLabel(str);
       return group;
     };
@@ -250,7 +251,7 @@
   
     var hitscanVolume = new THREE.Mesh(rect.clone(), hitscanMaterial);
     hitscanVolume.position.z = depth;
-    hitscanVolume.position.x = width * 0.5;
+    hitscanVolume.position.x = width  * 0.6;
   
     //  outline volume
     // const outline = new THREE.BoxHelper( hitscanVolume );
@@ -259,6 +260,7 @@
     //  checkbox volume
     var material = new THREE.MeshBasicMaterial({ color: Colors.CHECKBOX_BG_COLOR });
     var filledVolume = new THREE.Mesh(rect.clone(), material);
+  //  filledVolume.position.x  +=  0.1;
     // filledVolume.scale.set( ACTIVE_SCALE, ACTIVE_SCALE,ACTIVE_SCALE );
     hitscanVolume.add(filledVolume);
   
@@ -272,7 +274,7 @@
   
     var borderBox = Layout.createPanel(CHECKBOX_WIDTH + Layout.BORDER_THICKNESS, CHECKBOX_HEIGHT + Layout.BORDER_THICKNESS, CHECKBOX_DEPTH, true);
     borderBox.material.color.setHex(0x1f7ae7);
-    borderBox.position.x = -Layout.BORDER_THICKNESS * 0.5 + width * 0.5;
+    borderBox.position.x = -Layout.BORDER_THICKNESS * 0.5 + width * 0.6;
     borderBox.position.z = depth * 0.5;
   
     var checkmark = Graphic.checkmark();
@@ -297,7 +299,7 @@
   
       object[propertyName] = state.value;
       //customlize stuff
-      //console.log(object[propertyName],propertyName);
+      ////console.log(object[propertyName],propertyName);
       if (onChangedCB) {
         //customlize stuff
         onChangedCB( { name:propertyName, value:state.value } );
@@ -339,8 +341,10 @@
       return group;
     };
   
-    group.name = function (str) {
-      descriptorLabel.updateLabel(str);
+    group.name = function (str, color ) {
+      //console.log(344+str+'!!!!!!!!!!')
+      
+      descriptorLabel.updateLabel(str, color);
       return group;
     };
   
@@ -570,7 +574,7 @@
           state.open = false;
   
           if (onChangedCB && propertyChanged) {
-            //console.log(object[propertyName],propertyName);
+            ////console.log(object[propertyName],propertyName);
             onChangedCB(object[propertyName]);
           }
   
@@ -704,6 +708,7 @@
     };
   
     group.name = function (str) {
+      //console.log(709+str)
       descriptorLabel.update(str);
       return group;
     };
@@ -787,7 +792,7 @@
   
     var width = Layout.FOLDER_WIDTH;
     var depth = Layout.PANEL_DEPTH;
-  // console.log(_ref);
+  // //console.log(_ref);
     var state = {
       collapsed: false,
       previousParent: undefined
@@ -878,7 +883,7 @@
         collapseGroup.add(obj);
         obj.folder = group;
         obj.hideGrabber();
-        obj.close();
+        obj.open();
       });
   
       performLayout();
@@ -977,6 +982,7 @@
     };
   
     group.name = function (str) {
+      //console.log(str);
       descriptorLabel.updateLabel(str);
       return group;
     };
@@ -1005,6 +1011,7 @@
     };
     group.addCheckbox = function () {
       var controller = addCheckbox.apply(undefined, arguments);
+
       if (controller) {
         group.addController(controller);
         return controller;
@@ -1121,7 +1128,7 @@ function create() {
           tPosition.setFromMatrixPosition(hitObject.matrixWorld);
 
           input.mousePlane.setFromNormalAndCoplanarPoint(input.mouseCamera.getWorldDirection(input.mousePlane.normal), tPosition);
-          // console.log( input.mousePlane );
+          // //console.log( input.mousePlane );
         }
       }
     }
@@ -1155,7 +1162,7 @@ function create() {
           tPosition.setFromMatrixPosition(input.selected.matrixWorld);
 
           input.mouseOffset.copy(input.mouseIntersection).sub(tPosition);
-          // console.log( input.mouseOffset );
+          // //console.log( input.mouseOffset );
         }
       }
     } else {
@@ -1592,7 +1599,7 @@ function create() {
         // only pay attention to presses over the GUI
         if (flag && input.intersections.length > 0) {
           input.pressed = true;
-          //console.log(1595)
+          ////console.log(1595)
         } else {
           input.pressed = false;
         }
@@ -1679,7 +1686,7 @@ function create() {
     */
   
     function add(object, propertyName, arg3, arg4) {
-  
+     
       if (object === undefined) {
         return undefined;
       } else if (object[propertyName] === undefined) {
@@ -1688,6 +1695,7 @@ function create() {
       }
   
       if (isObject(arg3) || isArray(arg3)) {
+          //console.log(1697)
         return addDropdown(object, propertyName, arg3);
       }
   
@@ -1696,6 +1704,7 @@ function create() {
       }
   
       if (isBoolean(object[propertyName])) {
+        //console.log(1705)
         return addCheckbox(object, propertyName);
       }
   
@@ -1775,7 +1784,7 @@ function create() {
         hitscanObjects.push.apply(hitscanObjects, _toConsumableArray(folder.hitscan));
       }
   
- // console.log('1733'+'folder',folder);
+ // //console.log('1733'+'folder',folder);
       return folder;
     }
   
@@ -2510,11 +2519,11 @@ function create() {
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.generateMipmaps = false;
-  
+    //console.log('!!!!!!!!'+2521+color)
     return new THREE.RawShaderMaterial((0, _sdf2.default)({
       side: THREE.DoubleSide,
       transparent: true,
-      color: color,
+      color: new THREE.Color(color),
       map: texture
     }));
   }
@@ -2528,10 +2537,11 @@ function create() {
     var colorMaterials = {};
   
     function createText(str, font) {
-      var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0xffffff;
+       var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0xffffff;
       var scale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1.0;
-  //  console.log("2494",str);
-  
+     //console.log("2537",color);
+      // var color = 0xff0000
+      // var scale = 1.0
       var geometry = (0, _threeBmfontText2.default)({
         text: str,
         align: 'left',
@@ -2558,7 +2568,8 @@ function create() {
       return mesh;
     }
   
-    function create(str) {
+    function create(str, color) {
+      //console.log(2566,str,color)
       var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref$color = _ref.color,
           color = _ref$color === undefined ? 0xffffff : _ref$color,
@@ -2566,12 +2577,15 @@ function create() {
           scale = _ref$scale === undefined ? 1.0 : _ref$scale;
   
       var group = new THREE.Group();
-    //  console.log(_ref.color);
+    //  //console.log(_ref.color);
       var mesh = createText(str, font, color, scale);
       group.add(mesh);
       group.layout = mesh.geometry.layout;
   
-      group.updateLabel = function (str) {
+      group.updateLabel = function (str, color) {
+       //console.log(color+'!!!!!!!')
+        if(color != undefined)
+          mesh.material = createMaterial(color);
         mesh.geometry.update(str);
       };
   
@@ -2893,6 +2907,7 @@ function create() {
     };
   
     group.name = function (str) {
+      //console.log('2897'+str)
       descriptorLabel.updateLabel(str);
       return group;
     };
@@ -3332,7 +3347,7 @@ function create() {
               currentEdge.newEdge = newEdgeVertices.length;
               newEdgeVertices.push(newEdge);
   
-              // console.log(currentEdge, newEdge);
+              // //console.log(currentEdge, newEdge);
           }
   
           /******************************************************
@@ -3471,7 +3486,7 @@ function create() {
           geometry.faces = newFaces;
           if (hasUvs) geometry.faceVertexUvs[0] = newUVs;
   
-          // console.log('done');
+          // //console.log('done');
       };
   })();
   

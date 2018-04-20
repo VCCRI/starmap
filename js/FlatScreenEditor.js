@@ -79,28 +79,29 @@ FlatScreenEditor.prototype = {
             
             config.clusterList.push( cluster );
             var name = cluster.replace( 'mpoints__','' );
-            if( name != -1 ) var folderName = 'Cluster ' + name;
-            else var folderName = 'Outliers';
-            var clusterFolder = scope.settingGUI.addFolder( folderName, config.color[cluster] );
+            if( name != -1 ) var currCluster = 'Cluster ' + name;
+            else var currCluster = 'Outliers';
+            //var clusterFolder = scope.settingGUI.addFolder( folderName, config.color[cluster] );
 
-            clusterFolder.add( config.displayCluster, cluster ).name( 'Display Points' ).listen( ).onChange( function ( isDisplay ) {
+            scope.settingGUI.add( config.displayCluster, cluster ).name( 'Display '+currCluster,config.color[cluster] ).listen( ).onChange( function ( isDisplay ) {
                 new DisplayDataCommand( viewPort.pointsDict[this.property], isDisplay );
                 scope.highDemDetail.setVisible(this.property, isDisplay);
     
             });
-            if(name != -1) {
-                clusterFolder.add( config.displayBoundingSphere, cluster ).name( 'Display Bounding' ).listen( ).onChange(
-                     function ( isDisplay ) {
-                        new DisplayDataCommand( viewPort.boundingSphereDict[this.property].object3D, isDisplay );
-                });
-            }
+           
+            // if(name != -1) {
+            //     clusterFolder.add( config.displayBoundingSphere, cluster ).name( 'Display Bounding' ).listen( ).onChange(
+            //          function ( isDisplay ) {
+            //             new DisplayDataCommand( viewPort.boundingSphereDict[this.property].object3D, isDisplay );
+            //     });
+            // }
 
         }
         
         
          var featureMapFolder = scope.settingGUI.addFolder( 'Feature Map', '#FFFFFF' );
          
-         
+        featureMapFolder.open();
         
         for ( var i = 0 ; i < config.featureMap.length ; i += 1 ) {
             var name = i + 1;
