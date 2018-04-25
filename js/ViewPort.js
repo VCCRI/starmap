@@ -1,7 +1,7 @@
 var ViewPort = function() {
-    this.pointsDict = {}
+    this.pointsDict = {};
 
-    this.boundingSphereDict = {}
+    this.boundingSphereDict = {};
     
     this.boundingBox = {}
     this.fileData = {}
@@ -21,16 +21,7 @@ var ViewPort = function() {
 
     // create demo UI
     
-    // logo box
-    
-    var geometry = new THREE.BoxGeometry( 5, 5, 5 );
-    var material = new THREE.MeshBasicMaterial( {color: 0xffffff, wireframe:true} );
-    var cube = new THREE.Mesh( geometry, material );
-    cube.position.set(0, 0, -10);
-    
     var geometry = new THREE.SphereGeometry( 3, 6, 3 );
-   // var geometry = new THREE.SphereGeometry( 3, 6, 3, 0,6.3,0,3.4 );
-      //  var geometry = new THREE.SphereGeometry( 3, 6, 2, 0,6.3, 0, 1.4 );
     var logo = this.logo = document.createElement('a-entity');
     logo.setAttribute('logo','');
     
@@ -86,7 +77,7 @@ var ViewPort = function() {
     cameraEl.setAttribute('near','5');
     
     this.hiddenChild = new THREE.Group();
-    this.hiddenChild.position.set(2,4,-5.5);
+    this.hiddenChild.position.set(2,4,-5.05);
     cameraEl.object3D.add(this.hiddenChild);
     
     var cursorEl = this.cursorEl = document.createElement('a-entity');
@@ -165,7 +156,7 @@ var ViewPort = function() {
     });
 
 
-}
+};
 
 
 
@@ -392,7 +383,6 @@ ViewPort.prototype = {
 
                     
                 }
- 
                 scope.axis.renderAxis(boundingBox);
                 var cameraLookatDistance = 1.2*Math.max( config.boundingBox.width,config.boundingBox.height,config.boundingBox.depth );
                 scope.cameraWrapperEl.setAttribute( 'position','0 0 ' + cameraLookatDistance );

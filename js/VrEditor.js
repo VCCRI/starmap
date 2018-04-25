@@ -21,7 +21,7 @@ var VrEditor = function(viewPort) {
     var gamepadHelpPanel = this.gamepadHelpPanel = document.createElement('a-entity');
     gamepadHelpPanel.setAttribute("geometry","primitive:plane;height: 4; width: 7");
     gamepadHelpPanel.setAttribute("material","color:#AAAAAA;transparent:true; opacity:0.7");
-    gamepadHelpPanel.setAttribute("position","0 0 -5.1");
+    gamepadHelpPanel.setAttribute("position","0 0 -5.05");
     gamepadHelpPanel.setAttribute("scale","0 0 0");
     
     var gamepadHelpPopUp = document.createElement('a-animation');
@@ -72,7 +72,7 @@ VrEditor.prototype = {
              window.addEventListener(e, function(){
                  
                 gazeInput.pressed( true );
-                setTimeout(function(){gazeInput.pressed( false )},200)
+                setTimeout(function(){gazeInput.pressed( false );},200);
 
             }, false );
         });
@@ -85,9 +85,7 @@ VrEditor.prototype = {
             }, false );
         });
 
-        //var { camera, renderer } = this.sceneEl;
-        
-        
+
         scope.gui.position.x = 0;
         scope.gui.position.y = 0;
         scope.gui.position.z = 0;
@@ -218,7 +216,7 @@ VrEditor.prototype = {
             }
 
 
-        })
+        });
         //
     
         var quanternion = scope.cameraEl.object3D.quaternion;
@@ -228,7 +226,7 @@ VrEditor.prototype = {
             if( scope.keydown == 0 )
             scope.guiContainer.quaternion.copy( quanternion );
 
-        })
+        });
 
 
     },

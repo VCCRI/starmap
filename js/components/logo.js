@@ -8,17 +8,8 @@ AFRAME.registerComponent('logo', {
       
         this.particleSystem = new THREE.GPUParticleSystem( {maxParticles: 500} );
         this.clock = new THREE.Clock();
-        this.ticks = 0
-        // var geometry = new THREE.SphereGeometry( 2.75, 6, 3 );
-        // var material = new THREE.MeshBasicMaterial( {color: 0xffffff, wireframe:true} );
-        // this.sphere = new THREE.Mesh( geometry, material );
-        // this.sphere.position.set(0, 0, -10);
-        // this.sphere.rotateX(Math.PI/2);
-        // var spriteMap = new THREE.TextureLoader().load( "image/texture.png" );
-        // var spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
-        // var sprite= this.sprite = new THREE.Sprite( spriteMaterial );
-        // this.sprite.position.set(0, 0, -10);
-        
+        this.ticks = 0;
+
         
         var hbgeometry = new THREE.PlaneGeometry( 3, 3);
         var hbtexture = new THREE.TextureLoader().load('image/texture3.png');

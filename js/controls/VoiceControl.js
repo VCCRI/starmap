@@ -44,7 +44,7 @@ var VoiceControl = function(viewPort) {
     command.setAttribute("value","");
     
     command.setAttribute("width","3");
-    command.setAttribute("color","white");
+    command.setAttribute("color","#ffffff");
     commandBar.appendChild(command);
     
     //voice help
@@ -220,14 +220,18 @@ VoiceControl.prototype = {
             var cmd = event[0];
             if( cmd.length > 15 ) cmd = cmd.slice(0,15);
             scope.command.setAttribute("value",cmd);
+            scope.command.setAttribute("color","#ff0000");
             
         });
         
-        annyang.addCallback('resultMatch', function(a) {
-           scope.command.setAttribute("value",a);
+        annyang.addCallback('resultMatch', function(cmd) {
+          //   scope.micIcon.material.color = new THREE.Color(0xffffff);
+           scope.command.setAttribute("value",cmd);
+           scope.command.setAttribute("color","#3e8e41");
             
         });
         annyang.addCallback('soundstart', function() {
+            console.log('stasr');
             scope.micIcon.material.color = new THREE.Color(0xff0000);
             scope.command.setAttribute("value",'');
         });
