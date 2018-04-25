@@ -13,7 +13,7 @@ var ViewPort = function() {
     this.sceneEl.object3D.background = new THREE.Color( 0x222222 );
     this.sceneEl.setAttribute( 'keyboard-shortcuts', 'enterVR: false' );
     this.sceneEl.setAttribute('vr-mode-ui','enabled: false');
-
+    this.initCameraPosition = null;
     var light = document.createElement('a-entity');
     light.setAttribute('light','type: ambient; color: #fff');
 
@@ -85,10 +85,14 @@ var ViewPort = function() {
     cursorEl.setAttribute('raycaster','interval: 500; objects: .clickable; far:300;');
     cursorEl.setAttribute('cursor','fuse: true');
     
-    cursorEl.setAttribute ('position', '0 0 -5.5');
-    cursorEl.setAttribute ('geometry', 'primitive: ring; radiusInner: 0.145; radiusOuter: 0.180;thetaLength: 0; thetaStart: 90');
+    cursorEl.setAttribute ('position', '0 0 -5.04');
+    cursorEl.setAttribute ('geometry', 'primitive: ring; radiusInner: 0.140; radiusOuter: 0.175;thetaLength: 0; thetaStart: 90');
     cursorEl.setAttribute ('material', 'color: cyan; shader: flat;transparent:true; opacity:0.7');
     
+    cursorEl.addEventListener('ableHover',function(e){
+        cursorEl.setAttribute('cursor','fuse:'+ e.detail.bool);
+    });
+
     var fusingStartAnimation = this.fusingStartAnimation = document.createElement('a-animation');
     fusingStartAnimation.setAttribute('begin','fusing');
     fusingStartAnimation.setAttribute('attribute','geometry.thetaLength');
@@ -104,7 +108,7 @@ var ViewPort = function() {
     
     var cursorCenter =  this.cursorCenter = document.createElement('a-entity');
     cursorCenter.setAttribute('position','0 0 0');
-    cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 0.125; radiusInner: 0.075');
+    cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 0.120; radiusInner: 0.070');
     cursorCenter.setAttribute('material','color: #2ADD2A');
     cursorEl.appendChild(cursorCenter);
 
@@ -234,21 +238,20 @@ ViewPort.prototype = {
         
         var clickHandler = function(evt) {
             
-
             var intersection = evt.detail.intersection;
             scope.findSurrendingPoints(intersection.index,intersection.object.name);
            
-        } 
+        };
         
         var mouseLeaveHandler = function(evt) {
             scope.cursorCenter.setAttribute('material', 'color', '#2ADD2A');
             scope.cursorEl.setAttribute('geometry', 'thetaLength', '0');
-        }
+        };
         
         var fusingStartAnimationHandler = function() {
             scope.cursorCenter.setAttribute('material','color', '#ff0000');
          
-        }
+        };
         
  
         if( bool == true ){
@@ -385,7 +388,9 @@ ViewPort.prototype = {
                 }
                 scope.axis.renderAxis(boundingBox);
                 var cameraLookatDistance = 1.2*Math.max( config.boundingBox.width,config.boundingBox.height,config.boundingBox.depth );
-                scope.cameraWrapperEl.setAttribute( 'position','0 0 ' + cameraLookatDistance );
+           
+                scope.cameraWrapperEl.setAttribute( 'position', '0 0 ' + cameraLookatDistance );
+                scope.initCameraPosition = scope.cameraWrapperEl.object3D.position.clone();
                 //scope.cursorEl.components.raycaster.refreshObjects();
                 scope.flatScreenEditor.initFlatScreenUI();
                 
@@ -453,6 +458,16 @@ ViewPort.prototype = {
         this.pointContainer.setAttribute('visible',false);
 
     },  
+
+    reset : function( ) {
+        this.cameraWrapperEl.object3D.position.copy(this.initCameraPosition);
+        this.cameraEl.setAttribute('rotation','0 0 0');
+        this.cameraWrapperEl.object3D.updateMatrixWorld ( true ); 
+        //this.cameraWrapperEl.object3D.updateMatrix (  );
+        //this.cameraWrapperEl.setAttribute( 'position', this.initCameraPosition );
+        
+
+    },
 
     renderingBoundingSphere : function( ) {
     //var this = this;

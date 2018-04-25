@@ -1,3 +1,4 @@
+
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
   'use strict';
   
@@ -106,7 +107,7 @@
     updateView();
   
     function handleOnPress(p) {
-    //  //console.log("109");
+    //  ////console.log("109");
       if (group.visible === false) {
         return;
       }
@@ -119,7 +120,7 @@
     }
   
     function handleOnRelease() {
-   //   //console.log("122");
+   //   ////console.log("122");
       hitscanVolume.position.z = BUTTON_DEPTH * 0.5;
     }
   
@@ -144,7 +145,7 @@
     };
   
     group.name = function (str) {
-      //console.log(147+str)
+      ////console.log(147+str)
       descriptorLabel.updateLabel(str);
       return group;
     };
@@ -299,7 +300,7 @@
   
       object[propertyName] = state.value;
       //customlize stuff
-      ////console.log(object[propertyName],propertyName);
+      //////console.log(object[propertyName],propertyName);
       if (onChangedCB) {
         //customlize stuff
         onChangedCB( { name:propertyName, value:state.value } );
@@ -342,7 +343,7 @@
     };
   
     group.name = function (str, color ) {
-      //console.log(344+str+'!!!!!!!!!!')
+      ////console.log(344+str+'!!!!!!!!!!')
       
       descriptorLabel.updateLabel(str, color);
       return group;
@@ -574,7 +575,7 @@
           state.open = false;
   
           if (onChangedCB && propertyChanged) {
-            ////console.log(object[propertyName],propertyName);
+            //////console.log(object[propertyName],propertyName);
             onChangedCB(object[propertyName]);
           }
   
@@ -708,7 +709,7 @@
     };
   
     group.name = function (str) {
-      //console.log(709+str)
+      ////console.log(709+str)
       descriptorLabel.update(str);
       return group;
     };
@@ -792,7 +793,7 @@
   
     var width = Layout.FOLDER_WIDTH;
     var depth = Layout.PANEL_DEPTH;
-  // //console.log(_ref);
+  // ////console.log(_ref);
     var state = {
       collapsed: false,
       previousParent: undefined
@@ -982,7 +983,7 @@
     };
   
     group.name = function (str) {
-      //console.log(str);
+      ////console.log(str);
       descriptorLabel.updateLabel(str);
       return group;
     };
@@ -1128,7 +1129,7 @@ function create() {
           tPosition.setFromMatrixPosition(hitObject.matrixWorld);
 
           input.mousePlane.setFromNormalAndCoplanarPoint(input.mouseCamera.getWorldDirection(input.mousePlane.normal), tPosition);
-          // //console.log( input.mousePlane );
+          // ////console.log( input.mousePlane );
         }
       }
     }
@@ -1162,7 +1163,7 @@ function create() {
           tPosition.setFromMatrixPosition(input.selected.matrixWorld);
 
           input.mouseOffset.copy(input.mouseIntersection).sub(tPosition);
-          // //console.log( input.mouseOffset );
+          // ////console.log( input.mouseOffset );
         }
       }
     } else {
@@ -1396,7 +1397,7 @@ function create() {
     var inputObjects = [];
     var controllers = [];
     var hitscanObjects = []; //XXX: this is currently not used.
-  
+    var hoverStatus = 0;
     /*
       Functions for determining whether a given controller is visible (by which we
       mean not hidden, not 'visible' in terms of the camera orientation etc), and
@@ -1456,50 +1457,9 @@ function create() {
     */
     var cursorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444, transparent: true, blending: THREE.AdditiveBlending });
     function createCursor() {
-      // var cursorEl  = document.createElement('a-entity');
-      
-      // var cursorCenter = document.createElement('a-entity');
-      // cursorCenter.setAttribute('position','0 0 0');
-      // cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 2; radiusInner: 1');
-      // cursorCenter.setAttribute('material','color: #2ADD2A');
-    //  cursorCenter.object3D.add(
-        
+
         return new THREE.Mesh(new THREE.SphereGeometry(0.06, 4, 4), cursorMaterial);
       
-    //  cursorEl.object3D.add(cursorCenter.object3D);
-     // 
-      
-     // //cursorEl.object3D.add(new THREE.Mesh(new THREE.SphereGeometry(0.6, 4, 4), cursorMaterial));
-   //   return cursorEl.object3D;
-      
-      //   var cursorEl  = document.createElement('a-entity');
-        
-      //   // cursorEl.setAttribute('raycaster','interval: 500; objects: .clickable; far:300;');
-      //   // cursorEl.setAttribute('cursor','fuse: true');
-        
-      // //  cursorEl.setAttribute ('position', '0 0 -5.1');
-      //   cursorEl.setAttribute ('geometry', 'primitive: ring; radiusInner: 2; radiusOuter: 0.180;thetaLength: 0; thetaStart: 90');
-      //   cursorEl.setAttribute ('material', 'color: cyan; shader: flat;transparent:true; opacity:0.7');
-        
-      //   var fusingStartAnimation = document.createElement('a-animation');
-      //   fusingStartAnimation.setAttribute('begin','fusing');
-      //   fusingStartAnimation.setAttribute('attribute','geometry.thetaLength');
-      //   fusingStartAnimation.setAttribute('fill','forwards');
-      //   fusingStartAnimation.setAttribute('from','0');
-      //   fusingStartAnimation.setAttribute('to','360');
-      //   fusingStartAnimation.setAttribute('dur','1500');   
-      //   fusingStartAnimation.setAttribute('end','mouseleave');
-        
-      //   cursorEl.appendChild(fusingStartAnimation);
-        
-        
-        
-      //   var cursorCenter = document.createElement('a-entity');
-      //   cursorCenter.setAttribute('position','0 0 0');
-      //   cursorCenter.setAttribute('geometry','primitive: ring; radiusOuter: 4; radiusInner: 0.075');
-      //   cursorCenter.setAttribute('material','color: #2ADD2A');
-      //   cursorEl.appendChild(cursorCenter);
-    //  return cursorEl.object3D;
     }
   
     /*
@@ -1594,12 +1554,13 @@ function create() {
     */
     function addInputObject(object, raycaster) {
       var input = createInput(object,raycaster);
+      //console.log(config.cursorEl);
   
       input.laser.pressed = function (flag) {
         // only pay attention to presses over the GUI
         if (flag && input.intersections.length > 0) {
           input.pressed = true;
-          ////console.log(1595)
+          //////console.log(1595)
         } else {
           input.pressed = false;
         }
@@ -1616,7 +1577,6 @@ function create() {
       }
   
       inputObjects.push(input);
-  
       return input.laser;
     }
   
@@ -1695,7 +1655,7 @@ function create() {
       }
   
       if (isObject(arg3) || isArray(arg3)) {
-          //console.log(1697)
+          ////console.log(1697)
         return addDropdown(object, propertyName, arg3);
       }
   
@@ -1704,7 +1664,7 @@ function create() {
       }
   
       if (isBoolean(object[propertyName])) {
-        //console.log(1705)
+        ////console.log(1705)
         return addCheckbox(object, propertyName);
       }
   
@@ -1784,7 +1744,7 @@ function create() {
         hitscanObjects.push.apply(hitscanObjects, _toConsumableArray(folder.hitscan));
       }
   
- // //console.log('1733'+'folder',folder);
+ // ////console.log('1733'+'folder',folder);
       return folder;
     }
   
@@ -1858,11 +1818,22 @@ function create() {
     function parseIntersections(intersections, laser, cursor) {
       if (intersections.length > 0) {
         var firstHit = intersections[0];
+      //  console.log(config.cursorEl)
+        //console.log(hoverStatus)
+        if ( hoverStatus == 0 ) {
+          hoverStatus = 1;
+          config.cursorEl.emit('ableHover',{bool:false});
+        }
         updateLaser(laser, firstHit.point);
         cursor.position.copy(firstHit.point);
         cursor.visible = true;
         cursor.updateMatrixWorld();
       } else {
+        if( hoverStatus == 1 ){
+
+          hoverStatus = 0;
+          config.cursorEl.emit('ableHover',{bool:true});
+        }
         laser.visible = false;
         cursor.visible = false;
       }
@@ -2076,7 +2047,7 @@ function create() {
   
         var hover = hitVolume === hitObject;
         anyHover = anyHover || hover;
-  
+ 
         performStateEvents({
           input: input,
           hover: hover,
@@ -2148,7 +2119,7 @@ function create() {
           locked: false
         };
         events.emit(downName, payload);
-  
+     
         if (payload.locked) {
           input.interaction[interactionName] = interaction;
           input.interaction.hover = interaction;
@@ -2189,7 +2160,7 @@ function create() {
     }
   
     function isMainHover() {
-  
+    
       var noMainHover = true;
       for (var i = 0; i < availableInputs.length; i++) {
         if (availableInputs[i].interaction.hover !== undefined) {
@@ -2519,7 +2490,7 @@ function create() {
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.generateMipmaps = false;
-    //console.log('!!!!!!!!'+2521+color)
+    ////console.log('!!!!!!!!'+2521+color)
     return new THREE.RawShaderMaterial((0, _sdf2.default)({
       side: THREE.DoubleSide,
       transparent: true,
@@ -2539,7 +2510,7 @@ function create() {
     function createText(str, font) {
        var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0xffffff;
       var scale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1.0;
-     //console.log("2537",color);
+     ////console.log("2537",color);
       // var color = 0xff0000
       // var scale = 1.0
       var geometry = (0, _threeBmfontText2.default)({
@@ -2569,7 +2540,7 @@ function create() {
     }
   
     function create(str, color) {
-      //console.log(2566,str,color)
+      ////console.log(2566,str,color)
       var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref$color = _ref.color,
           color = _ref$color === undefined ? 0xffffff : _ref$color,
@@ -2577,13 +2548,13 @@ function create() {
           scale = _ref$scale === undefined ? 1.0 : _ref$scale;
   
       var group = new THREE.Group();
-    //  //console.log(_ref.color);
+    //  ////console.log(_ref.color);
       var mesh = createText(str, font, color, scale);
       group.add(mesh);
       group.layout = mesh.geometry.layout;
   
       group.updateLabel = function (str, color) {
-       //console.log(color+'!!!!!!!')
+       ////console.log(color+'!!!!!!!')
         if(color != undefined)
           mesh.material = createMaterial(color);
         mesh.geometry.update(str);
@@ -2907,7 +2878,7 @@ function create() {
     };
   
     group.name = function (str) {
-      //console.log('2897'+str)
+      ////console.log('2897'+str)
       descriptorLabel.updateLabel(str);
       return group;
     };
@@ -3347,7 +3318,7 @@ function create() {
               currentEdge.newEdge = newEdgeVertices.length;
               newEdgeVertices.push(newEdge);
   
-              // //console.log(currentEdge, newEdge);
+              // ////console.log(currentEdge, newEdge);
           }
   
           /******************************************************
@@ -3486,7 +3457,7 @@ function create() {
           geometry.faces = newFaces;
           if (hasUvs) geometry.faceVertexUvs[0] = newUVs;
   
-          // //console.log('done');
+          // ////console.log('done');
       };
   })();
   

@@ -9,7 +9,7 @@ function setSpriteScale(spritePool, dumyPool, preScale, newScale ) {
         pos.y = pos.y / preScale * newScale;
         pos.z = pos.z / preScale * newScale;
  
-        spritePool[i].position.copy(dumyPool[i].getWorldPosition())
+        spritePool[i].position.copy(dumyPool[i].getWorldPosition());
         
     }
 }
@@ -20,7 +20,7 @@ function setSpriteRotate(spritePool,dumyPool ) {
     for ( var i = 0; i < spritePool.length ; i += 1 ) {
 
         if( spritePool[i].visible == false ) break;
-        spritePool[i].position.copy(dumyPool[i].getWorldPosition())
+        spritePool[i].position.copy(dumyPool[i].getWorldPosition());
         
     }
 }

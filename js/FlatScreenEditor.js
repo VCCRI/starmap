@@ -1,6 +1,6 @@
 var FlatScreenEditor = function (viewPort) {
     //console.log(viewPort);
-    
+    this.viewPort = viewPort;
     this.cameraEl = viewPort.cameraEl;
     this.reclusterTool = viewPort.reclusterTool;
     this.settingGUI = null;
@@ -110,6 +110,17 @@ FlatScreenEditor.prototype = {
 
         }
         
+    // reset view
+    var reset =  {
+        reset: function(){
+            scope.viewPort.reset();
+    
+        }
+                
+    };
+
+    scope.settingGUI.add(reset, 'reset' ).name( "Reset Camera" );
+
         var helpStarted = false;    
         var keyboardHelp =  {
             help: function(){
@@ -122,10 +133,10 @@ FlatScreenEditor.prototype = {
                     helpStarted = false;
                     scope.keyboardHelpPanel.emit('keyboardhelpend');
                     
-                },5000);
+                },10000);
             }
             
-        }
+        };
        
         scope.settingGUI.add(keyboardHelp, 'help' ).name( "Help" );
         //window.location.reload(true);

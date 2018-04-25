@@ -202,6 +202,10 @@ VoiceControl.prototype = {
                 document.dispatchEvent(e);
                 
             },
+            'init' : function(){
+                scope.viewPort.reset();
+                scope.viewPort.vrEditor.resetUIPoistion();
+            },
             'help' : function(){
                 if (helpStarted) return;
                 helpStarted = true;
@@ -209,7 +213,7 @@ VoiceControl.prototype = {
                 setTimeout(function () {
                     helpStarted = false;
                     scope.voiceHelpBar.emit('helpend');
-                },5000);
+                },10000);
             }
             
         
@@ -225,13 +229,13 @@ VoiceControl.prototype = {
         });
         
         annyang.addCallback('resultMatch', function(cmd) {
-          //   scope.micIcon.material.color = new THREE.Color(0xffffff);
+           scope.micIcon.material.color = new THREE.Color(0xffffff);
            scope.command.setAttribute("value",cmd);
            scope.command.setAttribute("color","#3e8e41");
             
         });
         annyang.addCallback('soundstart', function() {
-            console.log('stasr');
+    
             scope.micIcon.material.color = new THREE.Color(0xff0000);
             scope.command.setAttribute("value",'');
         });
@@ -268,4 +272,4 @@ VoiceControl.prototype = {
     //     // }
     //   }
     
-}
+};

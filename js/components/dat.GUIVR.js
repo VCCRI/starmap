@@ -1083,7 +1083,7 @@
     interaction.events.on('onPressed', handleOnPress);
     interaction.events.on('tick', handleTick);
     interaction.events.on('onReleased', handleOnRelease);
-  
+    console.log('asfsadfsadf')
     var tempMatrix = new THREE.Matrix4();
     var tPosition = new THREE.Vector3();
   
@@ -1713,6 +1713,7 @@
     */
   
     function create(name) {
+      console.log('asfsdaf')
       var folder = (0, _folder2.default)({
         textCreator: textCreator,
         name: name,
@@ -2018,6 +2019,7 @@
             hitPoint = _extractHit.hitPoint;
   
         var hover = hitVolume === hitObject;
+           console.log(2121)
         anyHover = anyHover || hover;
   
         performStateEvents({
@@ -2075,14 +2077,14 @@
           downName = _ref.downName,
           holdName = _ref.holdName,
           upName = _ref.upName;
-  
+  console.log(2070)
       if (input[buttonName] === true && hitObject === undefined) {
         return;
       }
   
       //  hovering and button down but no interactions active yet
       if (hover && input[buttonName] === true && input.interaction[interactionName] === undefined) {
-  
+         console.log(2086)
         var payload = {
           input: input,
           hitObject: hitObject,
@@ -2122,6 +2124,7 @@
       if (input[buttonName] === false && input.interaction[interactionName] === interaction) {
         input.interaction[interactionName] = undefined;
         input.interaction.hover = undefined;
+        console.log(2125)
         events.emit(upName, {
           input: input,
           hitObject: hitObject,
@@ -2134,8 +2137,10 @@
     function isMainHover() {
   
       var noMainHover = true;
+      console.log(2070)
       for (var i = 0; i < availableInputs.length; i++) {
         if (availableInputs[i].interaction.hover !== undefined) {
+             console.log(2140)
           noMainHover = false;
           break;
         }
@@ -2146,6 +2151,7 @@
       }
   
       if (availableInputs.filter(function (input) {
+           console.log(2150)
         return input.interaction.hover === interaction;
       }).length > 0) {
         return true;
@@ -2305,6 +2311,7 @@
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   
   function create() {
+    console.log('aaaaa')
       var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           group = _ref.group,
           panel = _ref.panel;
@@ -2511,6 +2518,7 @@
     }
   
     function create(str) {
+      console.log('sssss')
       var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref$color = _ref.color,
           color = _ref$color === undefined ? 0xffffff : _ref$color,

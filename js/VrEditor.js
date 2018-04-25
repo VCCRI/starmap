@@ -6,22 +6,25 @@ var VrEditor = function(viewPort) {
     this.gui = dat.GUIVR.create( 'Settings' );
     this.keydown = 0;
     // console.log(this.gui);
-    //       this.gui.dom.setAttribute('class', 'clickable');
+    config.cursorEl = viewPort.cursorEl;
+   
     this.guiEl = document.createElement('a-entity');  
     this.viewPort = viewPort;
     this.guiContainer = this.guiEl.object3D;
     this.cameraEl = viewPort.cameraEl;
     this.cameraWrapperEl = viewPort.cameraWrapperEl;
     this.guiContainer.add(this.gui);
+
+
  //   this.initPositionOffset = {x: 2, y: 2, z: 5.5};
     this.unitVector = new THREE.Vector3(0, 1, 0);
     this.hiddenChild = viewPort.hiddenChild;
-    
+
     // gamepad helper
     var gamepadHelpPanel = this.gamepadHelpPanel = document.createElement('a-entity');
     gamepadHelpPanel.setAttribute("geometry","primitive:plane;height: 4; width: 7");
     gamepadHelpPanel.setAttribute("material","color:#AAAAAA;transparent:true; opacity:0.7");
-    gamepadHelpPanel.setAttribute("position","0 0 -5.05");
+    gamepadHelpPanel.setAttribute("position","0 0 -5.1");
     gamepadHelpPanel.setAttribute("scale","0 0 0");
     
     var gamepadHelpPopUp = document.createElement('a-animation');
@@ -48,17 +51,22 @@ var VrEditor = function(viewPort) {
     gamepadHelpPanel.object3D.add(gptext);
     
     this.cameraEl.appendChild(gamepadHelpPanel);
+
 }
 
 VrEditor.prototype = {
 
+
     initVrEditorUI : function() {
+            // viewPort.cursorEl.components.raycaster.objects.push(this.guiEl);
+            viewPort.cursorEl.components.raycaster.refreshObjects();
+            console.log(  viewPort.cursorEl.components);
         var scope = this;
         var cameraWrapperEl = scope.cameraWrapperEl;
         var cameraPosition = cameraWrapperEl.object3D.position;
         scope.viewPortCamera = scope.viewPort.cameraEl.object3D.getObjectByProperty( "type", "PerspectiveCamera" );
-        var gazeInput = dat.GUIVR.addInputObject( scope.viewPortCamera, scope.viewPort.cursorEl.components.raycaster.raycaster );
-
+        var gazeInput = dat.GUIVR.addInputObject( scope.viewPortCamera, scope.viewPort.cursorEl.components.raycaster.raycaster, viewPort.cursorEl );
+       
         ['pressMenu']
         .forEach( function(e){
             window.addEventListener(e, function(){
@@ -159,6 +167,18 @@ VrEditor.prototype = {
 
         scope.gui.addFolder( featureMapFolder );
         
+    // reset view
+        var reset =  {
+            reset: function(){
+                scope.viewPort.reset();
+                scope.resetUIPoistion();
+        
+            }
+                    
+        };
+
+    scope.gui.add(reset, 'reset' ).name( "Reset Camera" );
+
         var helpStarted = false;    
         var gamePadHelp =  {
             help: function(){
@@ -171,7 +191,7 @@ VrEditor.prototype = {
                     helpStarted = false;
                     scope.gamepadHelpPanel.emit('gamepadhelpend');
                     
-                },5000);
+                },10000);
             }
             
         }
@@ -201,7 +221,7 @@ VrEditor.prototype = {
             }
             
             
-    })
+    });
     
 
         scope.cameraWrapperEl.addEventListener('componentchanged', function (evt) { 
@@ -223,9 +243,9 @@ VrEditor.prototype = {
         scope.cameraEl.addEventListener('componentchanged', function (evt) {
             
             if ( evt.detail.name !== 'rotation' ) return;
-            if( scope.keydown == 0 )
+            if( scope.keydown == 0 )//{
             scope.guiContainer.quaternion.copy( quanternion );
-
+            //}
         });
 
 

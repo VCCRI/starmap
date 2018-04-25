@@ -4,7 +4,7 @@ var Compass = function(cameraEl, container){
     var compassWrapperEl = this.compassWrapperEl = document.createElement('a-entity');
     compassWrapperEl.setAttribute('id','compassWrapper');
     
-
+    var rad = 1.571;
     compassWrapperEl.setAttribute('position','-2 -1.8 -6');
 
 
@@ -17,16 +17,20 @@ var Compass = function(cameraEl, container){
 
     var cameraLookatEl = document.createElement('a-entity');
     cameraLookatEl.setAttribute('id','cameraLookat');
-    cameraLookatEl.setAttribute('meshline','path: 0 0 -0.7, 0 0 0.7; color: #000000;lineWidth:6');
+    //cameraLookatEl.setAttribute('meshline','path: 0 0 -0.7, 0 0 0.7; color: #000000;lineWidth:6');
 
-    var cameraLookAtLArrowEl = document.createElement('a-entity');
-    cameraLookAtLArrowEl.setAttribute('meshline','path:-0.15 0 -0.4, 0 0 -0.7; color:#000000;lineWidth:6');
-    cameraLookAtLArrowEl.object3D.quaternion.copy( cameraEl.object3D.quaternion );
-    var cameraLookAtRArrowEl = document.createElement('a-entity');
-    cameraLookAtRArrowEl.setAttribute('meshline','path:0.15 0 -0.4, 0 0 -0.7; color:#000000;lineWidth:6');
+    cameraLookatEl.setAttribute('geometry','primitive: plane; height: 2; width: 2');
+    cameraLookatEl.setAttribute('material','side: double;src:image/arrow.png; transparent:true; depthTest:0.8');
+    cameraLookatEl.setAttribute('rotation','-90 0 0');
+//<a-entity geometry="primitive: plane; height: 10; width: 10" material="side: double"></a-entity>
+    // var cameraLookAtLArrowEl = document.createElement('a-entity');
+    // cameraLookAtLArrowEl.setAttribute('meshline','path:-0.15 0 -0.4, 0 0 -0.7; color:#000000;lineWidth:6');
+    // cameraLookAtLArrowEl.object3D.quaternion.copy( cameraEl.object3D.quaternion );
+    // var cameraLookAtRArrowEl = document.createElement('a-entity');
+    // cameraLookAtRArrowEl.setAttribute('meshline','path:0.15 0 -0.4, 0 0 -0.7; color:#000000;lineWidth:6');
 
-    cameraLookatEl.appendChild(cameraLookAtLArrowEl);
-    cameraLookatEl.appendChild(cameraLookAtRArrowEl);
+    // cameraLookatEl.appendChild(cameraLookAtLArrowEl);
+    // cameraLookatEl.appendChild(cameraLookAtRArrowEl);
     compassWrapperEl.appendChild(cameraLookatEl);
 
 
@@ -39,7 +43,7 @@ var Compass = function(cameraEl, container){
 
     // xAxis
     var xAxisEl = document.createElement('a-entity');
-    xAxisEl.setAttribute('meshline','path: 0.7 0 0, -0.7 0 0; color: #B22222; lineWidth:5');
+    xAxisEl.setAttribute('meshline','path: 0.7 0 0, -0.7 0 0; color: #B22222; lineWidth: 7');
     // positive X
     var posXEl= document.createElement("a-entity");
     posXEl.setAttribute( 'points', { positions: [0,0,0] , hasColor : false ,  size:  0.5, textureSrc:'image/posX.png', sizeAttenuation: true, color: '#B22222'} );
@@ -54,7 +58,7 @@ var Compass = function(cameraEl, container){
 
     // yAxis
     var yAxisEl = document.createElement('a-entity');
-    yAxisEl.setAttribute('meshline','path: 0 0.7 0, 0 -0.7 0; color: #006400; lineWidth:5');
+    yAxisEl.setAttribute('meshline','path: 0 0.7 0, 0 -0.7 0; color: #006400; lineWidth: 7');
     // positive y
     var posYEl= document.createElement("a-entity");
     posYEl.setAttribute( 'points', { positions: [0,0,0] , hasColor : false ,  size: 0.5, textureSrc:'image/posY.png', sizeAttenuation: true,  color: '#006400'} );
@@ -69,7 +73,7 @@ var Compass = function(cameraEl, container){
 
     // zAxis
     var zAxisEl = document.createElement('a-entity');
-    zAxisEl.setAttribute('meshline','path: 0 0 0.7, 0 0 -0.7; color: #0000CD;lineWidth:5');
+    zAxisEl.setAttribute('meshline','path: 0 0 0.7, 0 0 -0.7; color: #0000CD;lineWidth: 7');
     // positive z
     var posZEl= document.createElement("a-entity");
     posZEl.setAttribute( 'points', { positions: [0,0,0] , hasColor : false , size: 0.5, textureSrc:'image/posZ.png', sizeAttenuation: true, color: '#0000CD'} );
@@ -96,7 +100,7 @@ var Compass = function(cameraEl, container){
         // console.log(cameraEl.object3D.getWorldRotation ());
         cameraRotation = { x: THREE.Math.degToRad(degRotation.x), y: THREE.Math.degToRad(degRotation.y), z: THREE.Math.degToRad(degRotation.z) };
 
-        cameraLookatEl.object3D.rotation.set( cameraRotation.x, 0, 0 );
+        cameraLookatEl.object3D.rotation.set( cameraRotation.x-rad, 0, 0 );
         coordinateSystemEl.object3D.rotation.set( coordinateRotation.x, coordinateRotation.y-cameraRotation.y, coordinateRotation.z-cameraRotation.z  );
         // cameraLookatEl.setAttribute( "rotation",{x:cameraRotation.x,y:0,z:0} );
         // coordinateSystemEl.setAttribute( "rotation",{x:coordinateRotation.x,y:coordinateRotation.y-cameraRotation.y,z:coordinateRotation.z-cameraRotation.z} );
