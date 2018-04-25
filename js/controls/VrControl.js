@@ -15,7 +15,7 @@ function setSpriteScale(spritePool, preScale, newScale ) {
 var VrControl = function( viewPort ) {
         //this.guiEl = vrEditor.guiEl;
         this.preTime = 0;
-        this.MOVESPEED = 2.5;
+        this.MOVESPEED = 1;
         this.ROTATESPEED = 1.5;
         this.SCALESPEED = 0.02;
         this.tween = undefined;

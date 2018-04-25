@@ -77,7 +77,7 @@ var ViewPort = function() {
     cameraEl.setAttribute('near','5');
     
     this.hiddenChild = new THREE.Group();
-    this.hiddenChild.position.set(2,4,-5.05);
+    this.hiddenChild.position.set(2,4,-5.07);
     cameraEl.object3D.add(this.hiddenChild);
     
     var cursorEl = this.cursorEl = document.createElement('a-entity');
