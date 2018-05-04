@@ -46,13 +46,13 @@ var UploadFile = function( viewPort ) {
     //UPLOAD FILE
     var uploadFileButton = document.createElement("button");
     uploadFileButton.setAttribute("class", "uploadButton");
-    uploadFileButton.innerHTML = 'UPLOAD CSV or TXT FILE';
+    uploadFileButton.innerHTML = 'UPLOAD FILE(.txt .csv .zip)';
    
     var uploadFileField = document.createElement("input");
     uploadFileField.setAttribute("id", "inputFileField");
     uploadFileField.setAttribute("type", "file");
     uploadFileField.setAttribute("style", 'display:none');
-    uploadFileField.setAttribute("accept", ".txt, .csv");
+    uploadFileField.setAttribute("accept", ".txt, .csv, .zip");
 
 
     uploadFileButton.addEventListener('click',function(){
@@ -66,7 +66,7 @@ var UploadFile = function( viewPort ) {
     button.innerHTML = "Example One";
     button.setAttribute('class','demoButton');
     button.addEventListener('click',function( ) {
-        demo('10k_data.csv');
+        demo('10k_data');
     });
     demoDiv.appendChild(button);
     
@@ -75,7 +75,7 @@ var UploadFile = function( viewPort ) {
     button2.innerHTML = "Example Two";
     button2.setAttribute('class','demoButton')
     button2.addEventListener('click',function( ) {
-        demo('300k_data.csv');
+        demo('300k_data');
     });
     demoDiv.appendChild(button2);
     
@@ -84,27 +84,39 @@ var UploadFile = function( viewPort ) {
     button3.innerHTML = "Example Three";
     button3.setAttribute('class','demoButton');
     button3.addEventListener('click',function( ) {
-        demo('800k_data.csv');
+        demo('800k_data');
     })
     demoDiv.appendChild(button3);
     sceneEl.appendChild(demoDiv);
     sceneEl.appendChild(sloganDiv);
     
     function demo(fileName) {
-        loader.style.display='block';
-        d3.text("sampleData/"+fileName, function(data) {
-            //alert('start parsing')
-            lines = data.split(/\r\n|\n/g);
-           
-            detectFeatures(lines[0]);
-            convertToMatrix(lines);
-            sceneEl.removeChild(demoDiv);
-            sceneEl.removeChild(sloganDiv);
-            loader.style.display='none';
-            viewPort.initControlUIAndRendering( );
-            
-        });
 
+        var promise = new JSZip.external.Promise(function (resolve, reject) {
+        JSZipUtils.getBinaryContent('./sampleData/'+fileName+'.zip', function(err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+            });
+        });
+        promise.then(JSZip.loadAsync)                     // 2) chain with the zip promise
+        .then(function(zip) {          
+            return zip.file(fileName+".csv").async("string"); // 3) chain with the text content promise
+        })
+        .then(function success(data) {  
+                              // 4) display the result
+                var lines = data.split(/\r\n|\n/g);
+                detectFeatures(lines[0]);
+                convertToMatrix(lines);
+                sceneEl.removeChild(demoDiv);
+                sceneEl.removeChild(sloganDiv);
+                loader.style.display='none';
+                viewPort.initControlUIAndRendering( );
+        }, function error(e) {
+    
+        });
     }
 
     function convertToMatrix ( rows ) {
@@ -185,7 +197,7 @@ var UploadFile = function( viewPort ) {
         var error = 0;
         var headerList = CSVtoArray( headerRow.toUpperCase( ) )[0];
         errorMessage.innerHTML = '';
-        console.log(headerList);
+        //console.log(headerList);
        
         if(headerList.indexOf('X') == -1) {
             errorMessage.innerHTML += ' X';
@@ -234,7 +246,7 @@ var UploadFile = function( viewPort ) {
 
             addAxisAsFeature();
         }
-        console.log(normalizeParams)
+        //console.log(normalizeParams)
         return true;
 
     }
@@ -265,21 +277,57 @@ var UploadFile = function( viewPort ) {
         noExtraFeatures = 0;
         var inputFile = evt.target.files[0];
         var reader = new FileReader();
+        if (evt.target.files[0].name.split('.').pop().toLowerCase() != 'zip'){
+         
+            normalizeParams = {};  
 
-        normalizeParams = {};  
-
-        reader.onload = function(e) {
-            data = reader.result;
-            lines = data.split(/\r\n|\n/g);
-            if (detectFeatures(lines[0])){
-                if(convertToMatrix(lines)){
-                   fileUploaded();
+            reader.onload = function(e) {
+                data = reader.result;
+                lines = data.split(/\r\n|\n/g);
+                
+                if (detectFeatures(lines[0])){
+                    if(convertToMatrix(lines)){
+                        fileUploaded();
+                    }
                 }
-            }
-            loader.style.display='none';
-            uploadFileField.value='';     
-        };         
-        reader.readAsText(inputFile);
+                loader.style.display='none';
+                uploadFileField.value = '';     
+            };         
+            reader.readAsText(inputFile);
+
+        }else{
+            reader.addEventListener( 'load', function ( event ) {	
+                var contents = event.target.result;
+                var count = 0;
+                var zip = new JSZip( );
+                zip.loadAsync(contents).then(function (zip) {
+                    var keys = Object.keys(zip.files);
+                    if ( keys.length > 1 ) {
+                        errorMessage.innerHTML = 'Number of files in a .zip must be equal to one.';
+                       
+                    }
+                    else{  
+                        zip.files[keys[0]].async('string').then(function (data) {
+                            lines = data.split(/\r\n|\n/g);
+
+                            if (detectFeatures(lines[0])){
+                                if(convertToMatrix(lines)){
+                                    fileUploaded();
+                                }
+                            }
+                            loader.style.display='none';
+                            uploadFileField.value = ''; 
+                        });
+
+                    }
+                    loader.style.display='none';
+                    uploadFileField.value = '';     
+                    
+                });
+
+            }, false );
+            reader.readAsBinaryString(inputFile);
+        }
     };
 
     var uploadFileParams = {

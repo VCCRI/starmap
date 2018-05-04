@@ -3,8 +3,8 @@ var ViewPort = function() {
 
     this.boundingSphereDict = {};
     
-    this.boundingBox = {}
-    this.fileData = {}
+    this.boundingBox = {};
+    this.fileData = {};
     this.NUMOFSP = 20;
     this.threshhold = 15;
     this.featuresNum = 0;
@@ -321,9 +321,9 @@ ViewPort.prototype = {
             var id = evt.detail.type;
             var object = evt.detail.object;
             var boundingSphere = object.geometry.boundingSphere;
-            console.log(boundingSphere);
+            //console.log(boundingSphere);
             scope.pointsDict[id] = evt.detail.object;
-            console.log(evt.detail.object);
+           // console.log(evt.detail.object);
             evt.detail.object.visible = false;
             renderBoundingSphere( id, boundingSphere, 1);
         
@@ -339,7 +339,7 @@ ViewPort.prototype = {
                 //console.log(key);
                 config.displayCluster[id] = false; 
                 if(key == -1){
-                    console.log("outlier");
+                   // console.log("outlier");
                     config.color[id] = '#035A75';
                     outlierEl.setAttribute( id, { positions: currCluster.positions , size: 1, color: config.color[id], textureSrc: 'null', sizeAttenuation: false } );
                 }else{
@@ -442,13 +442,10 @@ ViewPort.prototype = {
         
     },
 
-    initVrGUI : function( ) {
-        console.log('hello');
-    },
 
     renderingPoints : function( ) {
         //var scope = this;
-        console.log('start to rendering point');
+        //console.log('start to rendering point');
         this.pointContainer.setAttribute('visible',true);
 
     },

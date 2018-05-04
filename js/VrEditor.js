@@ -60,7 +60,7 @@ VrEditor.prototype = {
     initVrEditorUI : function() {
             // viewPort.cursorEl.components.raycaster.objects.push(this.guiEl);
             viewPort.cursorEl.components.raycaster.refreshObjects();
-            console.log(  viewPort.cursorEl.components);
+            //console.log(viewPort.cursorEl.components);
         var scope = this;
         var cameraWrapperEl = scope.cameraWrapperEl;
         var cameraPosition = cameraWrapperEl.object3D.position;
