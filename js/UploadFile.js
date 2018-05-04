@@ -302,26 +302,44 @@ var UploadFile = function( viewPort ) {
                 var zip = new JSZip( );
                 zip.loadAsync(contents).then(function (zip) {
                     var keys = Object.keys(zip.files);
-                    if ( keys.length > 1 ) {
+                    var newKeys = keys.slice();
+                
+                    for (var key of keys) {
+                        if (key.includes('__MACOSX/')) newKeys.splice( newKeys.indexOf(key),1);
+                    }
+
+                    //console.log(newKeys)
+                    if ( newKeys.length > 1 ) {
                         errorMessage.innerHTML = 'Number of files in a .zip must be equal to one.';
+                        loader.style.display='none';
+                        uploadFileField.value = '';  
                        
                     }
                     else{  
-                        zip.files[keys[0]].async('string').then(function (data) {
-                            lines = data.split(/\r\n|\n/g);
+                        var fileExtension = keys[0].split('.').pop();
+                        if( fileExtension != 'txt' && fileExtension != 'csv' ){
+                            errorMessage.innerHTML = 'File extension is not supported.';
+                                loader.style.display='none';
+                                uploadFileField.value = '';  
+                        }
+                        else{
+                            zip.files[keys[0]].async('string').then(function (data) {
+                                lines = data.split(/\r\n|\n/g);
 
-                            if (detectFeatures(lines[0])){
-                                if(convertToMatrix(lines)){
-                                    fileUploaded();
+                                if (detectFeatures(lines[0])){
+                                    if(convertToMatrix(lines)){
+                                        fileUploaded();
+                                    }
                                 }
-                            }
-                            loader.style.display='none';
-                            uploadFileField.value = ''; 
-                        });
+
+                                loader.style.display='none';
+                                uploadFileField.value = '';   
+            
+                            });
+                        }
 
                     }
-                    loader.style.display='none';
-                    uploadFileField.value = '';     
+       
                     
                 });
 
