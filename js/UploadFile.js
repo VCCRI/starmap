@@ -6,7 +6,7 @@ var UploadFile = function( viewPort ) {
     var pointContainer =  viewPort.pointContainer;
     var boundingSphereContainer = viewPort.boundingSphereContainer;
     var fileData = viewPort.fileData;
-    var confirm = null;
+    //var confirm = null;
     var noExtraFeatures = 0;
     //init GUI
     //var gui = new dat.GUI({ width: 275, closeOnTop:true, name:'Upload File' } );
@@ -26,7 +26,7 @@ var UploadFile = function( viewPort ) {
     errorMessageDiv.setAttribute('class', 'errorMessageDiv');
 
     var errorMessage  =document.createElement('h2');
-       errorMessage.setAttribute('class','h2');
+    errorMessage.setAttribute('class','h2');
     errorMessageDiv.appendChild(errorMessage);
     sceneEl.appendChild(errorMessageDiv);
 
@@ -75,14 +75,14 @@ var UploadFile = function( viewPort ) {
     button2.innerHTML = "Example Two";
     button2.setAttribute('class','demoButton')
     button2.addEventListener('click',function( ) {
-        demo('300k_data.csv')
-    })
+        demo('300k_data.csv');
+    });
     demoDiv.appendChild(button2);
     
 
     var button3 = document.createElement('button');
     button3.innerHTML = "Example Three";
-    button3.setAttribute('class','demoButton')
+    button3.setAttribute('class','demoButton');
     button3.addEventListener('click',function( ) {
         demo('800k_data.csv');
     })
@@ -98,13 +98,12 @@ var UploadFile = function( viewPort ) {
            
             detectFeatures(lines[0]);
             convertToMatrix(lines);
-           // gui.destroy();
             sceneEl.removeChild(demoDiv);
             sceneEl.removeChild(sloganDiv);
             loader.style.display='none';
             viewPort.initControlUIAndRendering( );
             
-        })
+        });
 
     }
 
@@ -113,7 +112,7 @@ var UploadFile = function( viewPort ) {
         var keys = Object.keys(normalizeParams);
         var clusterIndex  = keys.indexOf('CLUSTER');
         keys.splice(clusterIndex, 1);
-        var clusterColumnNum = normalizeParams['CLUSTER'].index;
+        var clusterColumnNum = normalizeParams.CLUSTER.index;
         var clusterRecord = [];
         for (var i = 1 ; i < rows.length -1 ; i += 1) {
 
@@ -135,7 +134,7 @@ var UploadFile = function( viewPort ) {
                 var currFeature = normalizeParams[keys[j]];
                 var currVal = parseFloat(columns[currFeature.index]);
                 currFeature.data.push(currVal);
-                if (isNaN(currVal)) {console.log("has NAN value "+keys[j]+" "+i);return false;}
+                if (isNaN(currVal)) {errorMessage.innerHTML = keys[j]+" contains non-numeric value"; return false;}
                 if( currVal > currFeature.max)  currFeature.max = currVal;
                 if( currVal < currFeature.min)  currFeature.min = currVal;
             }
@@ -168,7 +167,7 @@ var UploadFile = function( viewPort ) {
     
             currCluster = fileData[clusterRecord[i]];
 
-            currCluster.positions.push(normalizeParams['X'].data[i],normalizeParams['Y'].data[i],normalizeParams['Z'].data[i] )
+            currCluster.positions.push(normalizeParams['X'].data[i],normalizeParams['Y'].data[i],normalizeParams['Z'].data[i] );
             for ( var feature of features) {
                 //console.log(feature);
                 if(clusterRecord[i] != -1) {
@@ -183,22 +182,29 @@ var UploadFile = function( viewPort ) {
 
     function detectFeatures( headerRow ) {
         
-        if (confirm != null) {
-           // gui.remove(confirm);
-            confirm = null;
-        }
-        //var headerList = headerRow.toUpperCase().split(",");
-        var headerList = CSVtoArray( headerRow.toUpperCase() )[0];
-
+        var error = 0;
+        var headerList = CSVtoArray( headerRow.toUpperCase( ) )[0];
+        errorMessage.innerHTML = '';
         console.log(headerList);
        
-        if(headerList.indexOf('X') == -1 || headerList.indexOf('Y') == -1 || headerList.indexOf('Z') == -1 || headerList.indexOf('CLUSTER') == -1) 
-        {
-            console.log(headerList.indexOf('X') );            
-            console.log(headerList.indexOf('Y') );
-            console.log(headerList.indexOf('Z') );
-            console.log(headerList.indexOf('CLUSTER'));
+        if(headerList.indexOf('X') == -1) {
+            errorMessage.innerHTML += ' X';
+            error = 1;
 
+        }if( headerList.indexOf('Y') == -1) {
+            errorMessage.innerHTML += ' Y';
+            error = 1;
+        }if( headerList.indexOf('Z') == -1  ){
+            errorMessage.innerHTML += ' Z';
+            error = 1;
+        }if(headerList.indexOf('CLUSTER') == -1) {
+            errorMessage.innerHTML += ' ClUSTER';
+            error = 1;
+
+        }
+        if (error == 1){
+  
+            errorMessage.innerHTML = 'File must contain required Attributes: ' + errorMessage.innerHTML;
             return false;
         }
         // var realHeaderList = [];
@@ -286,12 +292,12 @@ var UploadFile = function( viewPort ) {
 
 
     var fileUploaded = function (){
-        //boundingBoxEl.setAttribute( 'visible', false );
-       // gui.destroy();
+
         sceneEl.removeChild(demoDiv);
         sceneEl.removeChild(sloganDiv);
+        sceneEl.removeChild(errorMessageDiv);
         viewPort.initControlUIAndRendering( );
-        //location.reload();
+    
         
     }
 
