@@ -84,8 +84,7 @@ var UploadFile = function( viewPort ) {
     button3.innerHTML = "Example Three";
     button3.setAttribute('class','demoButton');
     button3.addEventListener('click',function( ) {
-       // demo('800k_data');
-         demo('xxxxdata');
+        demo('800k_data');
     });
     demoDiv.appendChild(button3);
     sceneEl.appendChild(demoDiv);
