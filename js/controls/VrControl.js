@@ -1,16 +1,3 @@
-function setSpriteScale(spritePool, preScale, newScale ) {
-    
-    for ( var i = 0; i < spritePool.length ; i += 1 ) {
-        
-        if( spritePool[i].visible == false ) break;
-        var pos = spritePool[i].position;
-        pos.x = pos.x / preScale * newScale;
-        pos.y = pos.y / preScale * newScale;
-        pos.z = pos.z / preScale * newScale;
-        
-    }
-}
-
 
 var VrControl = function( viewPort ) {
         //this.guiEl = vrEditor.guiEl;

@@ -1,6 +1,6 @@
 
 function setSpriteScale(spritePool, dumyPool, preScale, newScale ) {
-    
+
     for ( var i = 0; i < spritePool.length ; i += 1 ) {
         
         if( spritePool[i].visible == false ) break;
@@ -10,12 +10,14 @@ function setSpriteScale(spritePool, dumyPool, preScale, newScale ) {
         pos.z = pos.z / preScale * newScale;
  
         spritePool[i].position.copy(dumyPool[i].getWorldPosition());
+       
         
     }
 }
 
-var prePos = new THREE.Vector3(0,0,0)
+var prePos = new THREE.Vector3(0,0,0);
 function setSpriteRotate(spritePool,dumyPool ) {
+  
     
     for ( var i = 0; i < spritePool.length ; i += 1 ) {
 

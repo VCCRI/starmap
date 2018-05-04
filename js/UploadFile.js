@@ -9,42 +9,65 @@ var UploadFile = function( viewPort ) {
     var confirm = null;
     var noExtraFeatures = 0;
     //init GUI
-    var gui = new dat.GUI({ width: 275, closeOnTop:true, name:'Upload File' } );
+    //var gui = new dat.GUI({ width: 275, closeOnTop:true, name:'Upload File' } );
     var loader = document.createElement('div');
     loader.setAttribute('class','loading');
     loader.style.display='none';
     sceneEl.appendChild(loader);
+    
 
 
     // var overlay = document.createElement('div');
     // overlay.setAttribute('id','overlay');
     // overlay.style.display='none';
    // sceneEl.appendChild(overlay);
-    //Load CSV file
-    var uploadFileField = document.createElement("input");
-    uploadFileField.setAttribute("id", "inputFileField");
-    uploadFileField.setAttribute("type", "file");
-    uploadFileField.setAttribute("style", "visibility:hidden");
-    uploadFileField.setAttribute("accept", ".txt, .csv");
-    
+    //ERROR MESSAGE
+    var errorMessageDiv = document.createElement("div"); 
+    errorMessageDiv.setAttribute('class', 'errorMessageDiv');
+
+    var errorMessage  =document.createElement('h2');
+       errorMessage.setAttribute('class','h2');
+    errorMessageDiv.appendChild(errorMessage);
+    sceneEl.appendChild(errorMessageDiv);
+
     
     var sloganDiv = this.sloganDiv = document.createElement('div');
     sloganDiv.setAttribute('class','sloganDiv');
     
     var slogan = this.slogan = document.createElement('h1');
     slogan.setAttribute('class','h1');
-    slogan.innerHTML = '<span style="color:#3e8e41">STARMAP</span>: Immersive 3D Visualisation of Single Cell Data Using Virtual Reality'
+    slogan.innerHTML = '<span style="color:#3e8e41">STARMAP</span>: Immersive 3D Visualisation of Single Cell Data Using Virtual Reality';
     sloganDiv.appendChild(slogan);
     
     var demoDiv = this.demoDiv = document.createElement('div');
     demoDiv.setAttribute('class','demoDiv');
     
+
+    //UPLOAD FILE
+    var uploadFileButton = document.createElement("button");
+    uploadFileButton.setAttribute("class", "uploadButton");
+    uploadFileButton.innerHTML = 'UPLOAD CSV or TXT FILE';
+   
+    var uploadFileField = document.createElement("input");
+    uploadFileField.setAttribute("id", "inputFileField");
+    uploadFileField.setAttribute("type", "file");
+    uploadFileField.setAttribute("style", 'display:none');
+    uploadFileField.setAttribute("accept", ".txt, .csv");
+
+
+    uploadFileButton.addEventListener('click',function(){
+        uploadFileField.click();
+     
+    });
+    demoDiv.appendChild(uploadFileButton);
+
+    //DEMO1
     var button = document.createElement('button');
     button.innerHTML = "Example One";
     button.setAttribute('class','demoButton');
     button.addEventListener('click',function( ) {
-        demo('10k_data.csv')
-    })
+        demo('10k_data.csv');
+    });
     demoDiv.appendChild(button);
     
     
@@ -52,7 +75,7 @@ var UploadFile = function( viewPort ) {
     button2.innerHTML = "Example Two";
     button2.setAttribute('class','demoButton')
     button2.addEventListener('click',function( ) {
-        demo('250k_data.csv')
+        demo('300k_data.csv')
     })
     demoDiv.appendChild(button2);
     
@@ -61,7 +84,7 @@ var UploadFile = function( viewPort ) {
     button3.innerHTML = "Example Three";
     button3.setAttribute('class','demoButton')
     button3.addEventListener('click',function( ) {
-        demo('300k_data.csv')
+        demo('800k_data.csv');
     })
     demoDiv.appendChild(button3);
     sceneEl.appendChild(demoDiv);
@@ -75,7 +98,7 @@ var UploadFile = function( viewPort ) {
            
             detectFeatures(lines[0]);
             convertToMatrix(lines);
-            gui.destroy();
+           // gui.destroy();
             sceneEl.removeChild(demoDiv);
             sceneEl.removeChild(sloganDiv);
             loader.style.display='none';
@@ -121,7 +144,7 @@ var UploadFile = function( viewPort ) {
             var currFeature = normalizeParams[keys[i]];
             njMatrix = nj.array(currFeature.data);
             if ( keys[i] == "X" ||  keys[i] == "Y" || keys[i] == "Z" )
-                njMatrix = njMatrix.divide(currFeature.max).multiply(150)
+                njMatrix = njMatrix.divide(currFeature.max).multiply(150);
                 
             else njMatrix = njMatrix.subtract(currFeature.min).divide(currFeature.max-currFeature.min).multiply(0.48)
             currFeature.data = njMatrix.tolist();
@@ -161,16 +184,20 @@ var UploadFile = function( viewPort ) {
     function detectFeatures( headerRow ) {
         
         if (confirm != null) {
-            gui.remove(confirm);
+           // gui.remove(confirm);
             confirm = null;
         }
-        var headerList = headerRow.toUpperCase().split(",");
+        //var headerList = headerRow.toUpperCase().split(",");
+        var headerList = CSVtoArray( headerRow.toUpperCase() )[0];
+
+        console.log(headerList);
+       
         if(headerList.indexOf('X') == -1 || headerList.indexOf('Y') == -1 || headerList.indexOf('Z') == -1 || headerList.indexOf('CLUSTER') == -1) 
         {
-            // console.log(headerList.indexOf('X') )
-            // console.log(headerList.indexOf('Y') )
-            // console.log(headerList.indexOf('Z') )
-            // console.log(headerList[9]== 'CLUSTER')
+            console.log(headerList.indexOf('X') );            
+            console.log(headerList.indexOf('Y') );
+            console.log(headerList.indexOf('Z') );
+            console.log(headerList.indexOf('CLUSTER'));
 
             return false;
         }
@@ -240,12 +267,12 @@ var UploadFile = function( viewPort ) {
             lines = data.split(/\r\n|\n/g);
             if (detectFeatures(lines[0])){
                 if(convertToMatrix(lines)){
-                   confirmUI();
+                   fileUploaded();
                 }
             }
             loader.style.display='none';
             uploadFileField.value='';     
-        }           
+        };         
         reader.readAsText(inputFile);
     };
 
@@ -255,12 +282,12 @@ var UploadFile = function( viewPort ) {
         }
     };
     
-    gui.add(uploadFileParams,'loadFile').name('Load CSV file');
+    //gui.add(uploadFileParams,'loadFile').name('Load CSV file');
 
 
     var fileUploaded = function (){
         //boundingBoxEl.setAttribute( 'visible', false );
-        gui.destroy();
+       // gui.destroy();
         sceneEl.removeChild(demoDiv);
         sceneEl.removeChild(sloganDiv);
         viewPort.initControlUIAndRendering( );
@@ -268,15 +295,33 @@ var UploadFile = function( viewPort ) {
         
     }
 
-    var confirmLogic = { startToExplore : fileUploaded };
+    // var confirmLogic = { startToExplore : fileUploaded };
  
-    function confirmUI() {
+    // function confirmUI() {
 
-        // confirm button to enter the VR 
-        confirm = gui.add(confirmLogic,'startToExplore').name("confirm");
+    //     // confirm button to enter the VR 
+    //     confirm = gui.add(confirmLogic,'startToExplore').name("confirm");
      
    
         
-    }
+    // }
 
-}
+};
+
+       // console.log(headerRow)
+        function CSVtoArray(text) {
+            var p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
+            for (l in text) {
+                l = text[l];
+                if ('"' === l) {
+                    if (s && l === p) row[i] += l;
+                    s = !s;
+                } else if (',' === l && s) l = row[++i] = '';
+                else if ('\n' === l && s) {
+                    if ('\r' === p) row[i] = row[i].slice(0, -1);
+                    row = ret[++r] = [l = '']; i = 0;
+                } else row[i] += l;
+                p = l;
+            }
+            return ret;
+        }
