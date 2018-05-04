@@ -91,7 +91,7 @@ var UploadFile = function( viewPort ) {
     sceneEl.appendChild(sloganDiv);
     
     function demo(fileName) {
-
+        loader.style.display='block';
         var promise = new JSZip.external.Promise(function (resolve, reject) {
         JSZipUtils.getBinaryContent('./sampleData/'+fileName+'.zip', function(err, data) {
             if (err) {
