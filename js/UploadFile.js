@@ -46,7 +46,7 @@ var UploadFile = function( viewPort ) {
     //UPLOAD FILE
     var uploadFileButton = document.createElement("button");
     uploadFileButton.setAttribute("class", "uploadButton");
-    uploadFileButton.innerHTML = 'UPLOAD FILE(.txt .csv .zip)';
+    uploadFileButton.innerHTML = 'UPLOAD FILE<br />(.txt .csv .zip)';
    
     var uploadFileField = document.createElement("input");
     uploadFileField.setAttribute("id", "inputFileField");
@@ -63,7 +63,7 @@ var UploadFile = function( viewPort ) {
 
     //DEMO1
     var button = document.createElement('button');
-    button.innerHTML = "Example One";
+    button.innerHTML = "Example One<br />(10K RNA-seq Data)";
     button.setAttribute('class','demoButton');
     button.addEventListener('click',function( ) {
         demo('10k_data');
@@ -72,8 +72,8 @@ var UploadFile = function( viewPort ) {
     
     
     var button2 = document.createElement('button');
-    button2.innerHTML = "Example Two";
-    button2.setAttribute('class','demoButton')
+    button2.innerHTML = "Example Two<br />(300K FACS Data)";
+    button2.setAttribute('class','demoButton');
     button2.addEventListener('click',function( ) {
         demo('300k_data');
     });
@@ -81,7 +81,7 @@ var UploadFile = function( viewPort ) {
     
 
     var button3 = document.createElement('button');
-    button3.innerHTML = "Example Three";
+    button3.innerHTML = "Example Three<br />(800K FACS Data)";
     button3.setAttribute('class','demoButton');
     button3.addEventListener('click',function( ) {
         demo('800k_data');
