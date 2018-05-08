@@ -46,7 +46,7 @@ var UploadFile = function( viewPort ) {
     //UPLOAD FILE
     var uploadFileButton = document.createElement("button");
     uploadFileButton.setAttribute("class", "uploadButton");
-    uploadFileButton.innerHTML = 'UPLOAD FILE<br />(.txt .csv .zip)';
+    uploadFileButton.innerHTML = 'Upload File<br />(.txt .csv .zip)';
    
     var uploadFileField = document.createElement("input");
     uploadFileField.setAttribute("id", "inputFileField");
