@@ -64,15 +64,15 @@ FlatScreenEditor.prototype = {
         });
 
         // Display All Bounding Sphere
-        scope.settingGUI.add(config, 'showAllBounding' ).name( 'Display All Bounding Sphere' ).listen( ).onChange( function ( isDisplay  ) {
+        // scope.settingGUI.add(config, 'showAllBounding' ).name( 'Display All Bounding Sphere' ).listen( ).onChange( function ( isDisplay  ) {
        
-            for( var key in config.displayBoundingSphere ) {
+        //     for( var key in config.displayBoundingSphere ) {
                 
-                config.displayBoundingSphere[key] = isDisplay;
-                new DisplayDataCommand( viewPort.boundingSphereDict[key].object3D, isDisplay );
+        //         config.displayBoundingSphere[key] = isDisplay;
+        //         new DisplayDataCommand( viewPort.boundingSphereDict[key].object3D, isDisplay );
           
-            }
-        });
+        //     }
+        // });
 
         //  Display Points, Display Bounding, Cluster Color for each cluster
         for( var cluster in config.color ) { 

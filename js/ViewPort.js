@@ -310,7 +310,7 @@ ViewPort.prototype = {
             var object = evt.detail.object;
             var boundingSphere = object.geometry.boundingSphere;
             scope.pointsDict[id] = evt.detail.object;
-            evt.detail.object.visible = false;
+            //evt.detail.object.visible = false;
         
             renderBoundingSphere( id, boundingSphere, 0);
         
@@ -324,7 +324,7 @@ ViewPort.prototype = {
             //console.log(boundingSphere);
             scope.pointsDict[id] = evt.detail.object;
            // console.log(evt.detail.object);
-            evt.detail.object.visible = false;
+            //evt.detail.object.visible = false;
             renderBoundingSphere( id, boundingSphere, 1);
         
         });
@@ -337,7 +337,7 @@ ViewPort.prototype = {
                 var currCluster = fileData[key];
                 var id = 'mpoints__'+key;
                 //console.log(key);
-                config.displayCluster[id] = false; 
+                config.displayCluster[id] = true; 
                 if(key == -1){
                    // console.log("outlier");
                     config.color[id] = '#035A75';
@@ -357,20 +357,20 @@ ViewPort.prototype = {
             
             counter += 1;
             if (outlier != 1) {
-                var key = id.replace('mpoints__','');
-                var boundingSphereEl = document.createElement( 'a-entity' );
+                // var key = id.replace('mpoints__','');
+                // var boundingSphereEl = document.createElement( 'a-entity' );
     
-                boundingSphereEl.setAttribute( 'id', 'bounding' + id );
+                // boundingSphereEl.setAttribute( 'id', 'bounding' + id );
              
-                if( boundingSphere.radius != 0 ) 
-                    boundingSphereEl.setAttribute( 'geometry', 'primitive: sphere; radius: ' + boundingSphere.radius );
-                else boundingSphereEl.setAttribute( 'geometry', 'primitive: sphere; radius: 2' );
-                boundingSphereEl.setAttribute( 'position', boundingSphere.center.x +' '+boundingSphere.center.y+' '+boundingSphere.center.z );
-                boundingSphereEl.setAttribute( 'material', 'transparent:true; opacity: 0.4; color: '+ config.color[id]);
+                // if( boundingSphere.radius != 0 ) 
+                //     boundingSphereEl.setAttribute( 'geometry', 'primitive: sphere; radius: ' + boundingSphere.radius );
+                // else boundingSphereEl.setAttribute( 'geometry', 'primitive: sphere; radius: 2' );
+                // boundingSphereEl.setAttribute( 'position', boundingSphere.center.x +' '+boundingSphere.center.y+' '+boundingSphere.center.z );
+                // boundingSphereEl.setAttribute( 'material', 'transparent:true; opacity: 0.4; color: '+ config.color[id]);
             
                 fileData[key].boundingSphere = boundingSphere;
-                scope.boundingSphereDict[id] = boundingSphereEl;
-                scope.boundingSphereContainer.appendChild( boundingSphereEl );
+                // scope.boundingSphereDict[id] = boundingSphereEl;
+                // scope.boundingSphereContainer.appendChild( boundingSphereEl );
             }
             boundingBox = calculateBoundingBox( boundingBox, boundingSphere );
 
@@ -385,30 +385,21 @@ ViewPort.prototype = {
                     center : new THREE.Vector3( (boundingBox.maxX + boundingBox.minX)/2, (boundingBox.maxY + boundingBox.minY)/2, (boundingBox.maxZ + boundingBox.minZ)/2 )
 
                     
-                }
+                };
                 scope.axis.renderAxis(boundingBox);
                 var cameraLookatDistance = 1.2*Math.max( config.boundingBox.width,config.boundingBox.height,config.boundingBox.depth );
-           
                 scope.cameraWrapperEl.setAttribute( 'position', '0 0 ' + cameraLookatDistance );
                 scope.initCameraPosition = scope.cameraWrapperEl.object3D.position.clone();
                 //scope.cursorEl.components.raycaster.refreshObjects();
                 scope.flatScreenEditor.initFlatScreenUI();
-                
                 scope.vrEditor.initVrEditorUI();
-                
                 scope.keyboardControl.init();
-                
                 scope.highDemDetail.init();
-                
                 scope.voiceControl.init();
-                //scope.voiceControl.enableVoiceControl(true);
-                
                 scope.vrControl.init();
-                
                 scope.keyboardControl.enableKeyboardControl(true);
                 scope.mouseControl.enableMouseControl(true);
-                
-               // scope.vrControl.enableVrControl(true);
+
              }
        
         }
