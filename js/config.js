@@ -25,8 +25,8 @@ var config = {
     ],
     displayBoundingSphere:{},
     displayCluster:{},
-    showAllPoints: false,
-    showAllBounding: true,
+    showAllPoints: true,
+    showAllBounding: false,
     clusterList : [],
     boundingBox : {},
     featureMap : []

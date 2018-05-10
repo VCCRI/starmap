@@ -116,15 +116,15 @@ VrEditor.prototype = {
         });
         
         
-        scope.gui.add(config, 'showAllBounding' ).name( 'Display All Bounding Sphere' ).listen( ).onChange( function ( isDisplay  ) {
+        // scope.gui.add(config, 'showAllBounding' ).name( 'Display All Bounding Sphere' ).listen( ).onChange( function ( isDisplay  ) {
             
-           for( var key in config.displayBoundingSphere ) {
+        //    for( var key in config.displayBoundingSphere ) {
                 
-                config.displayBoundingSphere[key] = isDisplay.value;
-                new DisplayDataCommand( scope.viewPort.boundingSphereDict[key].object3D, isDisplay.value );
-            }
+        //         config.displayBoundingSphere[key] = isDisplay.value;
+        //         new DisplayDataCommand( scope.viewPort.boundingSphereDict[key].object3D, isDisplay.value );
+        //     }
  
-        });
+        // });
 
         //add show points, show bounding and change color for each cluster
         for( var cluster in config.color ) { 

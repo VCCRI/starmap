@@ -36,7 +36,7 @@ var UploadFile = function( viewPort ) {
     
     var slogan = this.slogan = document.createElement('h1');
     slogan.setAttribute('class','h1');
-    slogan.innerHTML = '<span style="color:#3e8e41">STARMAP</span>: Immersive 3D Visualisation of Single Cell Data Using Virtual Reality';
+    slogan.innerHTML = '<span style="color:#3e8e41">starmap</span>: Immersive 3D visualisation of single cell data using virtual reality';
     sloganDiv.appendChild(slogan);
     
     var demoDiv = this.demoDiv = document.createElement('div');
@@ -61,18 +61,18 @@ var UploadFile = function( viewPort ) {
     });
     demoDiv.appendChild(uploadFileButton);
 
-    //DEMO1
-    var button = document.createElement('button');
-    button.innerHTML = "Example One<br />(10K RNA-seq Data)";
-    button.setAttribute('class','demoButton');
-    button.addEventListener('click',function( ) {
-        demo('10k_data');
-    });
-    demoDiv.appendChild(button);
+    // //DEMO1
+    // var button = document.createElement('button');
+    // button.innerHTML = "Example One<br />(10K RNA-seq Data)";
+    // button.setAttribute('class','demoButton');
+    // button.addEventListener('click',function( ) {
+    //     demo('10k_data');
+    // });
+    // demoDiv.appendChild(button);
     
     
     var button2 = document.createElement('button');
-    button2.innerHTML = "Example Two<br />(300K FACS Data)";
+    button2.innerHTML = "Demo 1<br />(300K FACS)";
     button2.setAttribute('class','demoButton');
     button2.addEventListener('click',function( ) {
         demo('300k_data');
@@ -81,10 +81,10 @@ var UploadFile = function( viewPort ) {
     
 
     var button3 = document.createElement('button');
-    button3.innerHTML = "Example Three<br />(800K FACS Data)";
+    button3.innerHTML = "Demo 2<br />(530k RNA-seq)";
     button3.setAttribute('class','demoButton');
     button3.addEventListener('click',function( ) {
-        demo('800k_data');
+        demo('530k_data');
     });
     demoDiv.appendChild(button3);
     sceneEl.appendChild(demoDiv);
