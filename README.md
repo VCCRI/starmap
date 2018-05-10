@@ -1,6 +1,6 @@
 # starmap
 
-<a href="url"><img src="QRcodeAndLogo/logo.pngg" align="left" height="96" alt="CIDR"></a>
+<a href="url"><img src="QRcodeAndLogo/logo.png" align="left" height="96" alt="CIDR"></a>
 =============================================================================================================================================
 
 Immersive three dimensional visualisation of single cell data using smartphone-enabled virtual reality
