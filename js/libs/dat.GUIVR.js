@@ -85,7 +85,7 @@
   
     //  This is a real hack since we need to fit the text position to the font scaling
     //  Please fix me.
-    buttonLabel.position.x = BUTTON_WIDTH * 0.5 - buttonLabel.layout.width * 0.000011 * 0.5;
+    buttonLabel.position.x = BUTTON_WIDTH * 0.25 - buttonLabel.layout.width * 0.000011 * 0.25;
     buttonLabel.position.z = BUTTON_DEPTH * 1.2;
     buttonLabel.position.y = -0.025;
     filledVolume.add(buttonLabel);
@@ -1728,6 +1728,7 @@ function create() {
     */
   
     function create(name, color) {
+      console.log(name);
       var folder = (0, _folder2.default)({
         textCreator: textCreator,
         name: name,
@@ -1738,7 +1739,8 @@ function create() {
         addCheckbox: addSimpleCheckbox,
         addButton: addSimpleButton
       });
-  
+  console.log(name,folder);
+
       controllers.push(folder);
       if (folder.hitscan) {
         hitscanObjects.push.apply(hitscanObjects, _toConsumableArray(folder.hitscan));
@@ -2736,6 +2738,7 @@ function create() {
   
     var panel = Layout.createPanel(width, height, depth);
     panel.name = 'panel';
+    
     panel.add(descriptorLabel, hitscanVolume, sliderBG, valueLabel, controllerID);
   
     group.add(panel);
