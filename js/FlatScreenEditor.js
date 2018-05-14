@@ -51,7 +51,7 @@ FlatScreenEditor.prototype = {
 
         var scope = this;
   
-        scope.settingGUI = new dat.GUI({ width: 275, closeOnTop:true, name: 'Custom Settings'} );
+        scope.settingGUI = new dat.GUI({ width: 300, closeOnTop:true, name: 'Custom Settings'} );
     
         // Show All Points
         scope.settingGUI.add(config, 'showAllPoints' ).name( 'Display All Points' ).listen( ).onChange( function ( isDisplay ) {

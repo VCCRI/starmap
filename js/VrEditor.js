@@ -4,7 +4,9 @@ var VrEditor = function(viewPort) {
     this.sceneEl = viewPort.sceneEl;
     this.scene = this.sceneEl.object3D;
     this.gui = dat.GUIVR.create( 'Settings' );
+
     this.keydown = 0;
+    this.isGrab = 0;
     // console.log(this.gui);
     config.cursorEl = viewPort.cursorEl;
    
@@ -66,7 +68,13 @@ VrEditor.prototype = {
         var cameraPosition = cameraWrapperEl.object3D.position;
         scope.viewPortCamera = scope.viewPort.cameraEl.object3D.getObjectByProperty( "type", "PerspectiveCamera" );
         var gazeInput = dat.GUIVR.addInputObject( scope.viewPortCamera, scope.viewPort.cursorEl.components.raycaster.raycaster, viewPort.cursorEl );
-       
+        config.cursorEl.addEventListener('grabbed', function(){
+            scope.isGrab = 1;
+        });
+        config.cursorEl.addEventListener('grabReleased', function(){
+         
+            scope.isGrab = 0;
+        });
         ['pressMenu']
         .forEach( function(e){
             window.addEventListener(e, function(){
@@ -97,7 +105,7 @@ VrEditor.prototype = {
         // scope.gui.geometry = new THREE.Geometry();
         scope.gui.position.set(-2,2,0);
         
-        scope.gui.scale.set(3,3,3);
+        scope.gui.scale.set(3,3,1);
  
     
    
@@ -224,6 +232,7 @@ VrEditor.prototype = {
     
 
         scope.cameraWrapperEl.addEventListener('componentchanged', function (evt) { 
+            if (scope.isGrab == 1 ) return;
             
             if ( evt.detail.name == 'position' ) {
                 var newPos = evt.detail.newData;
