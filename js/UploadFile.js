@@ -1,7 +1,7 @@
 var UploadFile = function( viewPort ) {
 
     var sceneEl  = viewPort.sceneEl;
-    var normalizeParams = {};
+    var normalizeParams = {};  
     var container = viewPort.container;
     var pointContainer =  viewPort.pointContainer;
     var boundingSphereContainer = viewPort.boundingSphereContainer;
@@ -14,7 +14,7 @@ var UploadFile = function( viewPort ) {
     loader.setAttribute('class','loading');
     loader.style.display='none';
     sceneEl.appendChild(loader);
-
+    
 
 
     // var overlay = document.createElement('div');
@@ -22,7 +22,7 @@ var UploadFile = function( viewPort ) {
     // overlay.style.display='none';
    // sceneEl.appendChild(overlay);
     //ERROR MESSAGE
-    var errorMessageDiv = document.createElement("div");
+    var errorMessageDiv = document.createElement("div"); 
     errorMessageDiv.setAttribute('class', 'errorMessageDiv');
 
     var errorMessage  =document.createElement('h2');
@@ -30,24 +30,24 @@ var UploadFile = function( viewPort ) {
     errorMessageDiv.appendChild(errorMessage);
     sceneEl.appendChild(errorMessageDiv);
 
-
+    
     var sloganDiv = this.sloganDiv = document.createElement('div');
     sloganDiv.setAttribute('class','sloganDiv');
-
+    
     var slogan = this.slogan = document.createElement('h1');
     slogan.setAttribute('class','h1');
     slogan.innerHTML = '<span style="color:#3e8e41">starmap</span>: Immersive 3D visualisation of single cell data using virtual reality';
     sloganDiv.appendChild(slogan);
-
+    
     var demoDiv = this.demoDiv = document.createElement('div');
     demoDiv.setAttribute('class','demoDiv');
-
+    
 
     //UPLOAD FILE
     var uploadFileButton = document.createElement("button");
     uploadFileButton.setAttribute("class", "uploadButton");
     uploadFileButton.innerHTML = 'Upload File<br />(.txt .csv .zip)';
-
+   
     var uploadFileField = document.createElement("input");
     uploadFileField.setAttribute("id", "inputFileField");
     uploadFileField.setAttribute("type", "file");
@@ -57,7 +57,7 @@ var UploadFile = function( viewPort ) {
 
     uploadFileButton.addEventListener('click',function(){
         uploadFileField.click();
-
+     
     });
     demoDiv.appendChild(uploadFileButton);
 
@@ -69,27 +69,27 @@ var UploadFile = function( viewPort ) {
     //     demo('10k_data');
     // });
     // demoDiv.appendChild(button);
-
-
+    
+    
     var button2 = document.createElement('button');
-    button2.innerHTML = "Demo 1<br />(68k RNA-seq data)";
+    button2.innerHTML = "Demo 1<br />(300K FACS)";
     button2.setAttribute('class','demoButton');
     button2.addEventListener('click',function( ) {
-        demo('RNAseq_68kpbmc_data.csv');
+        demo('300k_data');
     });
     demoDiv.appendChild(button2);
-
+    
 
     var button3 = document.createElement('button');
-    button3.innerHTML = "Demo 2<br />(500K FACS data)";
+    button3.innerHTML = "Demo 2<br />(530k RNA-seq)";
     button3.setAttribute('class','demoButton');
     button3.addEventListener('click',function( ) {
-        demo('FlowCytometry_500kUE_data.csv');
+        demo('530k_data');
     });
     demoDiv.appendChild(button3);
     sceneEl.appendChild(demoDiv);
     sceneEl.appendChild(sloganDiv);
-
+    
     function demo(fileName) {
         loader.style.display='block';
         var promise = new JSZip.external.Promise(function (resolve, reject) {
@@ -102,10 +102,10 @@ var UploadFile = function( viewPort ) {
             });
         });
         promise.then(JSZip.loadAsync)                     // 2) chain with the zip promise
-        .then(function(zip) {
+        .then(function(zip) {          
             return zip.file(fileName+".csv").async("string"); // 3) chain with the text content promise
         })
-        .then(function success(data) {
+        .then(function success(data) {  
                               // 4) display the result
                 var lines = data.split(/\r\n|\n/g);
                 detectFeatures(lines[0]);
@@ -115,7 +115,7 @@ var UploadFile = function( viewPort ) {
                 loader.style.display='none';
                 viewPort.initControlUIAndRendering( );
         }, function error(e) {
-
+    
         });
     }
 
@@ -156,12 +156,12 @@ var UploadFile = function( viewPort ) {
             njMatrix = nj.array(currFeature.data);
             if ( keys[i] == "X" ||  keys[i] == "Y" || keys[i] == "Z" )
                 njMatrix = njMatrix.divide(currFeature.max).multiply(150);
-
+                
             else njMatrix = njMatrix.subtract(currFeature.min).divide(currFeature.max-currFeature.min).multiply(0.48)
             currFeature.data = njMatrix.tolist();
-
+       
         }
-
+      
         prepareRenderingData(clusterRecord,keys);
 
         return true;
@@ -169,14 +169,14 @@ var UploadFile = function( viewPort ) {
 
 
     function prepareRenderingData( clusterRecord,features ) {
-
+ 
         features.splice(features.indexOf('X'), 1);
         features.splice(features.indexOf('Y'), 1);
         features.splice(features.indexOf('Z'), 1);
         viewPort.featuresNum = features.length;
 
         for (var i = 0; i < clusterRecord.length; i+=1 ) {
-
+    
             currCluster = fileData[clusterRecord[i]];
 
             currCluster.positions.push(normalizeParams['X'].data[i],normalizeParams['Y'].data[i],normalizeParams['Z'].data[i] );
@@ -187,18 +187,18 @@ var UploadFile = function( viewPort ) {
                 }
             }
 
-        }
-
+        }    
+       
     }
 
 
     function detectFeatures( headerRow ) {
-
+        
         var error = 0;
         var headerList = CSVtoArray( headerRow.toUpperCase( ) )[0];
         errorMessage.innerHTML = '';
         //console.log(headerList);
-
+       
         if(headerList.indexOf('X') == -1) {
             errorMessage.innerHTML += ' X';
             error = 1;
@@ -215,7 +215,7 @@ var UploadFile = function( viewPort ) {
 
         }
         if (error == 1){
-
+  
             errorMessage.innerHTML = 'File must contain required Attributes: ' + errorMessage.innerHTML;
             return false;
         }
@@ -269,41 +269,41 @@ var UploadFile = function( viewPort ) {
             normalizeParams[currFeature].min = Infinity;
         }
     }
-
+    
     uploadFileField.onchange = function(evt) {
-
+        
         loader.style.display='block';
         fileData = viewPort.fileData = {};
         noExtraFeatures = 0;
         var inputFile = evt.target.files[0];
         var reader = new FileReader();
         if (evt.target.files[0].name.split('.').pop().toLowerCase() != 'zip'){
-
-            normalizeParams = {};
+         
+            normalizeParams = {};  
 
             reader.onload = function(e) {
                 data = reader.result;
                 lines = data.split(/\r\n|\n/g);
-
+                
                 if (detectFeatures(lines[0])){
                     if(convertToMatrix(lines)){
                         fileUploaded();
                     }
                 }
                 loader.style.display='none';
-                uploadFileField.value = '';
-            };
+                uploadFileField.value = '';     
+            };         
             reader.readAsText(inputFile);
 
         }else{
-            reader.addEventListener( 'load', function ( event ) {
+            reader.addEventListener( 'load', function ( event ) {	
                 var contents = event.target.result;
                 var count = 0;
                 var zip = new JSZip( );
                 zip.loadAsync(contents).then(function (zip) {
                     var keys = Object.keys(zip.files);
                     var newKeys = keys.slice();
-
+                
                     for (var key of keys) {
                         if (key.includes('__MACOSX/')) newKeys.splice( newKeys.indexOf(key),1);
                     }
@@ -312,15 +312,15 @@ var UploadFile = function( viewPort ) {
                     if ( newKeys.length > 1 ) {
                         errorMessage.innerHTML = 'Number of files in a .zip must be equal to one.';
                         loader.style.display='none';
-                        uploadFileField.value = '';
-
+                        uploadFileField.value = '';  
+                       
                     }
-                    else{
+                    else{  
                         var fileExtension = keys[0].split('.').pop();
                         if( fileExtension != 'txt' && fileExtension != 'csv' ){
                             errorMessage.innerHTML = 'File extension is not supported.';
                                 loader.style.display='none';
-                                uploadFileField.value = '';
+                                uploadFileField.value = '';  
                         }
                         else{
                             zip.files[keys[0]].async('string').then(function (data) {
@@ -333,14 +333,14 @@ var UploadFile = function( viewPort ) {
                                 }
 
                                 loader.style.display='none';
-                                uploadFileField.value = '';
-
+                                uploadFileField.value = '';   
+            
                             });
                         }
 
                     }
-
-
+       
+                    
                 });
 
             }, false );
@@ -349,11 +349,11 @@ var UploadFile = function( viewPort ) {
     };
 
     var uploadFileParams = {
-        loadFile : function() {
+        loadFile : function() { 
                 uploadFileField.click();
         }
     };
-
+    
     //gui.add(uploadFileParams,'loadFile').name('Load CSV file');
 
 
@@ -363,19 +363,19 @@ var UploadFile = function( viewPort ) {
         sceneEl.removeChild(sloganDiv);
         sceneEl.removeChild(errorMessageDiv);
         viewPort.initControlUIAndRendering( );
-
-
+    
+        
     }
 
     // var confirmLogic = { startToExplore : fileUploaded };
-
+ 
     // function confirmUI() {
 
-    //     // confirm button to enter the VR
+    //     // confirm button to enter the VR 
     //     confirm = gui.add(confirmLogic,'startToExplore').name("confirm");
-
-
-
+     
+   
+        
     // }
 
 };
