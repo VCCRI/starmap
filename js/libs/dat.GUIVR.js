@@ -52,7 +52,7 @@
         _ref$depth = _ref.depth,
         depth = _ref$depth === undefined ? Layout.PANEL_DEPTH : _ref$depth;
   
-    var BUTTON_WIDTH = width*0.75 - Layout.PANEL_MARGIN;
+    var BUTTON_WIDTH = width*0.65 - Layout.PANEL_MARGIN;
     var BUTTON_HEIGHT = height - Layout.PANEL_MARGIN;
     var BUTTON_DEPTH = Layout.BUTTON_DEPTH;
   
@@ -67,7 +67,7 @@
     var rect = new THREE.BoxGeometry(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_DEPTH, Math.floor(divisions * aspectRatio), divisions, divisions);
     var modifier = new THREE.SubdivisionModifier(1);
     modifier.modify(rect);
-    rect.translate(BUTTON_WIDTH * 0.14, 0, 0);
+    rect.translate(BUTTON_WIDTH * 0.2, 0, 0);
   
     //  hitscan volume
     var hitscanMaterial = new THREE.MeshBasicMaterial();
@@ -81,11 +81,11 @@
     var filledVolume = new THREE.Mesh(rect.clone(), material);
     hitscanVolume.add(filledVolume);
   
-    var buttonLabel = textCreator.create(propertyName, { scale: 0.866 });
+    var buttonLabel = textCreator.create(propertyName, { scale: 0.8 });
   
     //  This is a real hack since we need to fit the text position to the font scaling
     //  Please fix me.
-    buttonLabel.position.x = - BUTTON_WIDTH * 0.3;//+ buttonLabel.layout.width * 0.000011 * 0.5;
+    buttonLabel.position.x = - BUTTON_WIDTH * 0.27;//+ buttonLabel.layout.width * 0.000011 * 0.5;
    // buttonLabel.position.x =
     buttonLabel.position.z = BUTTON_DEPTH * 1.2;
     buttonLabel.position.y = -0.025;
@@ -2313,7 +2313,7 @@ function create() {
     return new THREE.Mesh(geo, SharedMaterials.PANEL);
   }
   
-  var PANEL_WIDTH = exports.PANEL_WIDTH = 1.3;
+  var PANEL_WIDTH = exports.PANEL_WIDTH = 1.0;
   var PANEL_HEIGHT = exports.PANEL_HEIGHT = 0.08;
   var PANEL_DEPTH = exports.PANEL_DEPTH = 0.01;
   var PANEL_SPACING = exports.PANEL_SPACING = 0.001;
@@ -2323,7 +2323,7 @@ function create() {
   var CONTROLLER_ID_WIDTH = exports.CONTROLLER_ID_WIDTH = 0.02;
   var CONTROLLER_ID_DEPTH = exports.CONTROLLER_ID_DEPTH = 0.001;
   var BUTTON_DEPTH = exports.BUTTON_DEPTH = 0.01;
-  var FOLDER_WIDTH = exports.FOLDER_WIDTH = 1.3;
+  var FOLDER_WIDTH = exports.FOLDER_WIDTH = 1.0;
   var FOLDER_HEIGHT = exports.FOLDER_HEIGHT = 0.08;
   var FOLDER_GRAB_HEIGHT = exports.FOLDER_GRAB_HEIGHT = 0.0512;
   var BORDER_THICKNESS = exports.BORDER_THICKNESS = 0.01;
