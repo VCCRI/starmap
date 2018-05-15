@@ -77,7 +77,7 @@ var ViewPort = function() {
     cameraEl.setAttribute('near','5');
     
     this.hiddenChild = new THREE.Group();
-    this.hiddenChild.position.set(2,4,-5.07);
+    this.hiddenChild.position.set(2,4,-6);
     cameraEl.object3D.add(this.hiddenChild);
     
     var cursorEl = this.cursorEl = document.createElement('a-entity');
@@ -175,9 +175,13 @@ ViewPort.prototype = {
         var surrendingPoints = {};
         var totalPointsLength = 0;
        // var relativeCluster = [];
-        
+       // config.displayCluster[key]
+        // for ( var [currCluster, points] of Object.entries(viewPort.pointsDict)) {
+        //     console.log(currCluster,points.visible)
+        // }
         for ( var [currCluster, points] of Object.entries(this.fileData)) {
-            if( currCluster == -1 ) continue;
+
+            if( currCluster == -1 || viewPort.pointsDict['mpoints__'+currCluster].visible == false) continue;
             if( points.boundingSphere.center.distanceTo(centerPoint) - points.boundingSphere.radius > this.sqrtThreshhold ) continue;
             
                 var l = points.getSurrendingPoints(this.threshhold, centerPoint);
@@ -310,6 +314,7 @@ ViewPort.prototype = {
             var object = evt.detail.object;
             var boundingSphere = object.geometry.boundingSphere;
             scope.pointsDict[id] = evt.detail.object;
+            console.log(id);
             //evt.detail.object.visible = false;
         
             renderBoundingSphere( id, boundingSphere, 0);
@@ -323,6 +328,7 @@ ViewPort.prototype = {
             var boundingSphere = object.geometry.boundingSphere;
             //console.log(boundingSphere);
             scope.pointsDict[id] = evt.detail.object;
+           
            // console.log(evt.detail.object);
             //evt.detail.object.visible = false;
             renderBoundingSphere( id, boundingSphere, 1);
@@ -330,11 +336,11 @@ ViewPort.prototype = {
         });
         
         var colorCount = 0;
-        for( var key in fileData ) {
+        for( var key in this.fileData ) {
            
             if( this.fileData.hasOwnProperty( key ) ) {
                 
-                var currCluster = fileData[key];
+                var currCluster = this.fileData[key];
                 var id = 'mpoints__'+key;
                 //console.log(key);
                 config.displayCluster[id] = true; 
@@ -347,6 +353,7 @@ ViewPort.prototype = {
                     config.displayBoundingSphere[id] = true; 
                     scope.pointsEl.setAttribute( id, { positions: currCluster.positions ,featuresNum: scope.featuresNum, size: 2, color: config.defaultColor[colorCount] } );
                 }
+                
             }
             colorCount += 1;
            

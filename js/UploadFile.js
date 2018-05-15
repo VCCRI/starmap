@@ -72,19 +72,19 @@ var UploadFile = function( viewPort ) {
     
     
     var button2 = document.createElement('button');
-    button2.innerHTML = "Demo 1<br />(300K FACS)";
+    button2.innerHTML = "Demo 1<br />(68K RNA-seq)";
     button2.setAttribute('class','demoButton');
     button2.addEventListener('click',function( ) {
-        demo('300k_data');
+        demo('RNAseq_68kpbmc_data');
     });
     demoDiv.appendChild(button2);
     
 
     var button3 = document.createElement('button');
-    button3.innerHTML = "Demo 2<br />(530k RNA-seq)";
+    button3.innerHTML = "Demo 2<br />(500K FACS)";
     button3.setAttribute('class','demoButton');
     button3.addEventListener('click',function( ) {
-        demo('530k_data');
+        demo('FlowCytometry_500kUE_data');
     });
     demoDiv.appendChild(button3);
     sceneEl.appendChild(demoDiv);

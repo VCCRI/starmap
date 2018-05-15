@@ -28,8 +28,9 @@ var VrControl = function( viewPort ) {
         var cameraWrapperEl = scope.viewPort.cameraWrapperEl;
         var cameraWrapper = cameraWrapperEl.object3D;
         var camera = scope.viewPort.cameraEl.object3D;
-        var spritePool = scope.viewPort.highDemDetail.spritePoolGroup;
         var points = scope.viewPort.pointsEl.object3D;
+        var spritePool = scope.viewPort.highDemDetail.spritePool;
+        var dumyPool = scope.viewPort.highDemDetail.dumyPool;
   
         
         var onkeydown = function( e ) {
@@ -194,6 +195,8 @@ var VrControl = function( viewPort ) {
                     var rotate = container.getAttribute('rotation');
                     rotate.y -= scope.ROTATESPEED;
                     container.setAttribute('rotation', rotate.x+' '+rotate.y+ ' '+rotate.z);
+                    container.object3D.updateMatrixWorld();
+                    setSpriteRotate(spritePool,dumyPool);
                     
                 })
                 .onStart(function(){
@@ -217,6 +220,8 @@ var VrControl = function( viewPort ) {
                     var rotate = container.getAttribute('rotation');
                     rotate.y += scope.ROTATESPEED;
                     container.setAttribute('rotation', rotate.x+' '+rotate.y+ ' '+rotate.z);
+                    container.object3D.updateMatrixWorld();
+                    setSpriteRotate(spritePool,dumyPool);
                  
                     
                 })

@@ -64,7 +64,7 @@ KeyboardControl.prototype = {
         var outlier = scope.outlier.children[0];
         var spritePool = scope.viewPort.highDemDetail.spritePool;
         var dumyPool = scope.viewPort.highDemDetail.dumyPool;
-        var spritePoolGroup = scope.viewPort.highDemDetail.spritePoolGroup;
+
         
         
         
@@ -205,7 +205,7 @@ KeyboardControl.prototype = {
                 if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
                 boundingSphere.scale.set(newScale,newScale,newScale);
                 axis.scale.set(newScale,newScale,newScale);
-                 setSpriteScale(spritePool, dumyPool, preScale, newScale )
+                setSpriteScale(spritePool, dumyPool, preScale, newScale );
                 
                 preScale = newScale;
                 map = {};
@@ -222,7 +222,7 @@ KeyboardControl.prototype = {
                 if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
                 boundingSphere.scale.set(newScale,newScale,newScale);
                 axis.scale.set(newScale,newScale,newScale);
-                 setSpriteScale(spritePool, dumyPool, preScale, newScale )
+                setSpriteScale(spritePool, dumyPool, preScale, newScale );
                 //spritePool.scale.set(newScale,newScale,newScale);
                 preScale = newScale;
                 map = {};

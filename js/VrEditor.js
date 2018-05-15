@@ -4,7 +4,9 @@ var VrEditor = function(viewPort) {
     this.sceneEl = viewPort.sceneEl;
     this.scene = this.sceneEl.object3D;
     this.gui = dat.GUIVR.create( 'Settings' );
+
     this.keydown = 0;
+    this.isGrab = 0;
     // console.log(this.gui);
     config.cursorEl = viewPort.cursorEl;
    
@@ -66,7 +68,13 @@ VrEditor.prototype = {
         var cameraPosition = cameraWrapperEl.object3D.position;
         scope.viewPortCamera = scope.viewPort.cameraEl.object3D.getObjectByProperty( "type", "PerspectiveCamera" );
         var gazeInput = dat.GUIVR.addInputObject( scope.viewPortCamera, scope.viewPort.cursorEl.components.raycaster.raycaster, viewPort.cursorEl );
-       
+        config.cursorEl.addEventListener('grabbed', function(){
+            scope.isGrab = 1;
+        });
+        config.cursorEl.addEventListener('grabReleased', function(){
+         
+            scope.isGrab = 0;
+        });
         ['pressMenu']
         .forEach( function(e){
             window.addEventListener(e, function(){
@@ -94,14 +102,13 @@ VrEditor.prototype = {
         });
 
 
-        scope.gui.position.x = 0;
-        scope.gui.position.y = 0;
-        scope.gui.position.z = 0;
-        scope.gui.scale.set(3,3,3);
+        // scope.gui.geometry = new THREE.Geometry();
+        scope.gui.position.set(-2,2,0);
+        
+        scope.gui.scale.set(3,3,1);
  
     
-        var newPos = this.hiddenChild.getWorldPosition();
-        this.guiEl.setAttribute('position', newPos.x + ' ' + newPos.y + ' ' + newPos.z );
+   
         scope.guiContainer.lookAt(cameraPosition);
 
        
@@ -209,11 +216,11 @@ VrEditor.prototype = {
             
             if(map[79]){
                 scope.guiEl.emit("pressMenu");
-                scope.keydown = 1
+                scope.keydown = 1;
                 map = {};
             }else if(map[71]){
                 scope.guiEl.emit("releaseMenu");
-                scope.keydown = 0
+                scope.keydown = 0;
                 map = {};
             }else if(map[86]) {
                 scope.resetUIPoistion();
@@ -225,6 +232,7 @@ VrEditor.prototype = {
     
 
         scope.cameraWrapperEl.addEventListener('componentchanged', function (evt) { 
+            if (scope.isGrab == 1 ) return;
             
             if ( evt.detail.name == 'position' ) {
                 var newPos = evt.detail.newData;
@@ -238,12 +246,36 @@ VrEditor.prototype = {
 
         });
         //
-    
+        var fix = 0;
         var quanternion = scope.cameraEl.object3D.quaternion;
+        var delta = 4;
+        var fixRP = new THREE.Vector3();
+        var preLen = 0;
         scope.cameraEl.addEventListener('componentchanged', function (evt) {
+          //  console.log(scope.guiContainer)
             
             if ( evt.detail.name !== 'rotation' ) return;
             if( scope.keydown == 0 )//{
+           
+        //     var newPos = scope.hiddenChild.getWorldPosition();
+        //    // newPos.y = 0;
+        //     var relativeP = new THREE.Vector3().subVectors(newPos,scope.guiContainer.position);
+        //     var len = relativeP.length();
+        //     if( len > 5 && len > preLen ){
+        //         // if(fix == 0) {
+        //         //     fixRP = relativeP.clone();
+        //         //    // delta = len+0.02;
+        //         //     fix = 1;
+        //         // }
+        //         fixRP = relativeP.normalize().multiplyScalar(4);
+        //       //  console.log(';settting')
+        //         //console.log(new THREE.Vector3().subVectors(newPos,relativeP));
+        //         //console.log(scope.guiContainer.position);
+        //         scope.guiContainer.position.copy(new THREE.Vector3().subVectors(newPos,fixRP));
+
+        //     }
+        //     preLen = len;
+
             scope.guiContainer.quaternion.copy( quanternion );
             //}
         });
@@ -257,16 +289,17 @@ VrEditor.prototype = {
 
     displayVrUI : function ( ) {
         
-        var newPos = this.hiddenChild.getWorldPosition();
-        this.guiEl.setAttribute('position', newPos.x + ' ' + newPos.y + ' ' + newPos.z );
+        // var newPos = this.hiddenChild.getWorldPosition();
+        // this.guiEl.setAttribute('position', newPos.x + ' ' + newPos.y + ' ' + newPos.z );
+        this.resetUIPoistion();
         this.sceneEl.appendChild( this.guiEl );
     
     },
     
     resetUIPoistion : function( ) {
-        
         var newPos = this.hiddenChild.getWorldPosition();
-        this.guiContainer.position.set(newPos.x, newPos.y, newPos.z);
+        this.guiEl.setAttribute('position', newPos.x + ' ' + newPos.y + ' ' + newPos.z );
+   
       
     }
 
