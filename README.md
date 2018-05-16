@@ -11,7 +11,7 @@ Copyright © 2018, Victor Chang Cardiac Research Institute
 
 starmap is a web-based VR-enabled tool which combines a 3D scatter plot with star plots (radar chart) to visualise hundreds of thousands of multivariate data points, such as single-cell expression data. starmap can be accessed from a desktop, laptop or a mobile device from the following link: [https://vccri.github.io/starmap/](https://vccri.github.io/starmap/), or the QR code below:
 
-<a href="url"><img src="QRcodeAndLogo/QR_Code_Star_Map.png" align="left" height="108" alt="starmap"></a>
+<a href="url"><img src="QRcodeAndLogo/QR_Code_Star_Map.png" align="left" height="108" alt="starmap"></a><br><br>
 
 ## Input data
 
