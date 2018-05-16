@@ -13,7 +13,7 @@ starmap is a web-based VR-enabled tool which combines a 3D scatter plot with sta
 
 ## Input data
 
-starmap accepts as input a csv file or a zip-compressed csv file. The csv file need to contain a header row with the following column names -- x, y, z and cluster -- corresponding to the 3D coordinates of points and the cluster label assigned for each point (with outliers assigned the value of -1). In addition to the required columns, starmap also accepts extra columns (up to 12) corresponding to features which will be visualised in the star plot. The values for all columns must be of numeric types.
+starmap accepts as input a csv file or a zip-compressed csv file. The csv file need to contain a header row with the following column names --- x, y, z and cluster --- corresponding to the 3D coordinates of points and the cluster label assigned for each point (with outliers assigned the value of -1). In addition to the required columns, starmap also accepts extra columns (up to 12) corresponding to features which will be visualised in the star plot. The values for all columns must be of numeric types.
 
 To see an example of input data, please see the sampleData folder which contains two example datasets based on previously published single-cell RNA-seq data and flow cytometry data.
 
