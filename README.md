@@ -1,4 +1,4 @@
-<a href="url"><img src="QRcodeAndLogo/logo.png" align="left" height="96" alt="starmap"></a>
+<a href="url"><img src="QRcodeAndLogo/logo.png" align="left" height="108" alt="starmap"></a>
 # starmap: Immersive three dimensional visualisation of single cell data using smartphone-enabled virtual reality
 
 Authors: Andrian Yang, Yu Yao, Jianfu Li and Joshua W. K. Ho
