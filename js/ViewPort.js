@@ -77,7 +77,7 @@ var ViewPort = function() {
     cameraEl.setAttribute('near','5');
     
     this.hiddenChild = new THREE.Group();
-    this.hiddenChild.position.set(2,4,-6);
+    this.hiddenChild.position.set(3,0,-6);
     cameraEl.object3D.add(this.hiddenChild);
     
     var cursorEl = this.cursorEl = document.createElement('a-entity');
@@ -400,8 +400,8 @@ ViewPort.prototype = {
                 //scope.cursorEl.components.raycaster.refreshObjects();
                 scope.flatScreenEditor.initFlatScreenUI();
                 scope.vrEditor.initVrEditorUI();
-                scope.keyboardControl.init();
                 scope.highDemDetail.init();
+                scope.keyboardControl.init();
                 scope.voiceControl.init();
                 scope.vrControl.init();
                 scope.keyboardControl.enableKeyboardControl(true);
