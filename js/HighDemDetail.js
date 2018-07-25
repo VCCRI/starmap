@@ -34,12 +34,12 @@ HighDemDetail.prototype = {
             var pmaterial = new THREE.MeshBasicMaterial( {map: texture, side: THREE.FrontSide, alphaTest:0.5} );
             var plane = new THREE.Mesh( pgeometry, pmaterial );
             plane.scale.set( 1.75, 1.75, 1.75);
-            var material = new THREE.LineBasicMaterial({color:0xffffff,linewidth: 3});
+            var material = new THREE.MeshBasicMaterial({color:0xffffff,linewidth: 3,opacity:0.7,transparent:true});
             var geometry = new THREE.BufferGeometry();
-            var vertices = new Float32Array(21);
+            var vertices = new Float32Array(scope.featuresNum*3*3);
             geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
             
-            var line = new THREE.Line( geometry, material );
+            var line = new THREE.Mesh( geometry, material );
             line.position.set(0, 0, 0.01);
             line.visible = false;
             plane.add(line);
@@ -50,7 +50,7 @@ HighDemDetail.prototype = {
             scope.spritePoolGroup.add(fakeSprite);
        
             scope.spritePool.push(plane);
-            scope.dumyPool.push(fakeSprite)
+            scope.dumyPool.push(fakeSprite);
             
             scope.scene.add(plane);
         

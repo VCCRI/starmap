@@ -29,6 +29,7 @@ var VrControl = function( viewPort ) {
         var cameraWrapper = cameraWrapperEl.object3D;
         var camera = scope.viewPort.cameraEl.object3D;
         var points = scope.viewPort.pointsEl.object3D;
+
         var spritePool = scope.viewPort.highDemDetail.spritePool;
         var dumyPool = scope.viewPort.highDemDetail.dumyPool;
   
@@ -258,8 +259,8 @@ var VrControl = function( viewPort ) {
                         if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
                         boundingSphere.scale.set(newScale,newScale,newScale);
                         axis.scale.set(newScale,newScale,newScale);
-                        setSpriteScale(spritePool.children , preScale, newScale);
                         
+                        setSpriteScale(spritePool, dumyPool, preScale, newScale );
                         preScale = newScale;
     
                         
@@ -296,7 +297,8 @@ var VrControl = function( viewPort ) {
                         if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
                         boundingSphere.scale.set(newScale,newScale,newScale);
                         axis.scale.set(newScale,newScale,newScale);
-                        setSpriteScale(spritePool.children , preScale, newScale);
+                        setSpriteScale(spritePool, dumyPool, preScale, newScale );
+                        
                         
                         preScale = newScale;
     

@@ -213,7 +213,7 @@ VoiceControl.prototype = {
                 setTimeout(function () {
                     helpStarted = false;
                     scope.voiceHelpBar.emit('helpend');
-                },10000);
+                },5000);
             }
             
         

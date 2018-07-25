@@ -182,17 +182,67 @@ AFRAME.registerComponent('mpoints', {
     var positionAttribute  = currSprite.children[0].geometry.attributes.position;
     var positionArray = positionAttribute.array;
     
+    var preCoor = this.calculatePointCoor2(feature[0],0);
+    var starCoor = {x:preCoor.x,y:preCoor.y,z:preCoor.z};
+    var currCoor;
+    positionArrayIndex = 0;
     
-    for ( var i = 0 ; i < this.data.featuresNum ; i += 1 ) {
+    for ( var i = 1 ; i < this.data.featuresNum ; i += 1 ) {
     
-      this.calculatePointCoor( feature[i], i, positionArray );
+      // this.calculatePointCoor( feature[i], i, positionArray );
+      currCoor = this.calculatePointCoor2( feature[i], i, positionArray );
+      
+      positionArray[positionArrayIndex] = preCoor.x;
+      positionArrayIndex += 1;
+      positionArray[positionArrayIndex] = preCoor.y;
+      positionArrayIndex += 1;
+      positionArray[positionArrayIndex] = preCoor.z;
+      positionArrayIndex += 1;
 
+      positionArray[positionArrayIndex] = currCoor.x;
+      positionArrayIndex += 1;
+      positionArray[positionArrayIndex] = currCoor.y;
+      positionArrayIndex += 1;
+      positionArray[positionArrayIndex] = currCoor.z;
+      positionArrayIndex += 1;
+
+      positionArray[positionArrayIndex] = 0;
+      positionArrayIndex += 1;
+      positionArray[positionArrayIndex] = 0;
+      positionArrayIndex += 1;
+      positionArray[positionArrayIndex] = 0;
+      positionArrayIndex += 1;
+
+      preCoor = currCoor;
+    
     }
-
-    positionArray[18] = 0;
-    positionArray[19] = feature[0];
-    positionArray[20] = 0;
     
+
+    positionArray[positionArrayIndex] = preCoor.x;
+    positionArrayIndex += 1;
+    positionArray[positionArrayIndex] = preCoor.y;
+    positionArrayIndex += 1;
+    positionArray[positionArrayIndex] = preCoor.z;
+    positionArrayIndex += 1;
+
+    positionArray[positionArrayIndex] = starCoor.x;
+    positionArrayIndex += 1;
+    positionArray[positionArrayIndex] = starCoor.y;
+    positionArrayIndex += 1;
+    positionArray[positionArrayIndex] = starCoor.z;
+    positionArrayIndex += 1;
+
+    positionArray[positionArrayIndex] = 0;
+    positionArrayIndex += 1;
+    positionArray[positionArrayIndex] = 0;
+    positionArrayIndex += 1;
+    positionArray[positionArrayIndex] = 0;
+    positionArrayIndex += 1;
+    
+
+    // console.log(positionArrayIndex);
+    // console.log(positionArray);
+
     positionAttribute.needsUpdate = true;
     
     currSprite.children[0].visible = true;
@@ -207,6 +257,23 @@ AFRAME.registerComponent('mpoints', {
     
     vertices[3*index+1] = cosTheta*feature;
     vertices[3*index+2] = 0;
+
+    //return new THREE.Vector3(-sinTheta*feature, cosTheta*feature, 0);
+    
+    
+  },
+
+    calculatePointCoor2: function( feature, index ) {
+    var angle = this.rotationAngle*index;
+    
+    var sinTheta = Math.round(Math.sin(angle)*1000)/1000;
+    var cosTheta = Math.round(Math.cos(angle)*1000)/1000;
+
+    return {x:-sinTheta*feature,y:cosTheta*feature,z:0};
+    // vertices[3*index] = -sinTheta*feature;
+    
+    // vertices[3*index+1] = cosTheta*feature;
+    // vertices[3*index+2] = 0;
 
     //return new THREE.Vector3(-sinTheta*feature, cosTheta*feature, 0);
     
