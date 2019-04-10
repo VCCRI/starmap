@@ -167,9 +167,9 @@ KeyboardControl.prototype = {
                 var direction = camera.getWorldDirection();
                 var angle = Math.PI / 2;
                 direction.applyAxisAngle( scope.unitVector, angle );
-                cameraWrapper.position.x -= direction.x*scope.MOVESPEED;
-                cameraWrapper.position.y -= direction.y*scope.MOVESPEED;
-                cameraWrapper.position.z -= direction.z*scope.MOVESPEED;
+				var len = Math.sqrt(direction.x*direction.x + direction.z*direction.z);
+                cameraWrapper.position.x -= direction.x*scope.MOVESPEED/len;
+                cameraWrapper.position.z -= direction.z*scope.MOVESPEED/len;
                 map = {};
 
             }
@@ -179,11 +179,24 @@ KeyboardControl.prototype = {
                 var direction = camera.getWorldDirection();
                 var angle = Math.PI / 2;
                 direction.applyAxisAngle( scope.unitVector, angle );
-                cameraWrapper.position.x += direction.x*scope.MOVESPEED;
-                cameraWrapper.position.y += direction.y*scope.MOVESPEED;
-                cameraWrapper.position.z += direction.z*scope.MOVESPEED;
+				var len = Math.sqrt(direction.x*direction.x + direction.z*direction.z);
+                cameraWrapper.position.x += direction.x*scope.MOVESPEED/len;
+                cameraWrapper.position.z += direction.z*scope.MOVESPEED/len;
+                map = {};
+            }
+
+            // MOVE UP
+            else if(map[88]){
+
+                cameraWrapper.position.y += scope.MOVESPEED;
                 map = {};
 
+            }
+            // MOVE DOWN
+            else if(map[90]){
+
+                cameraWrapper.position.y -= scope.MOVESPEED;
+                map = {};
 
             }
             
@@ -228,9 +241,6 @@ KeyboardControl.prototype = {
                 map = {};
 
             }
-            
-            
-        
         }
         
         this.onkeydownHandler = onkeydown.bind(this);
@@ -251,7 +261,5 @@ KeyboardControl.prototype = {
             console.log('keyboardDisabled');
         }
     }
-    
-    
 }
 
