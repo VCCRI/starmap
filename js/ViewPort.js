@@ -47,9 +47,13 @@ var ViewPort = function() {
     pointContainer.setAttribute('visible',true);
     container.appendChild(pointContainer);
 
+    var splImageContainer= this.splImageContainer = document.createElement('a-plane');
+    splImageContainer.setAttribute('id','splImageContainer');
+    splImageContainer.setAttribute( 'visible',false );
+    console.log(splImageContainer.object3D)
+    container.appendChild(splImageContainer);
 
-
-     var pointsEl = this.pointsEl = document.createElement( 'a-entity' );
+    var pointsEl = this.pointsEl = document.createElement( 'a-entity' );
     pointsEl.setAttribute('class', 'clickable');
     pointsEl.setAttribute('id', 'points');
     pointContainer.appendChild( pointsEl );
@@ -185,6 +189,7 @@ ViewPort.prototype = {
             if( points.boundingSphere.center.distanceTo(centerPoint) - points.boundingSphere.radius > this.sqrtThreshhold ) continue;
             
                 var l = points.getSurrendingPoints(this.threshhold, centerPoint);
+             
                 if(l.length > 0 ) {
                     surrendingPoints[currCluster] = l;
                     totalPointsLength += l.length;
@@ -315,6 +320,7 @@ ViewPort.prototype = {
             var boundingSphere = object.geometry.boundingSphere;
             scope.pointsDict[id] = evt.detail.object;
             console.log(id);
+            console.log(boundingSphere)
             //evt.detail.object.visible = false;
         
             renderBoundingSphere( id, boundingSphere, 0);

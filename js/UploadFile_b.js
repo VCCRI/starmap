@@ -2,16 +2,25 @@ var UploadFile = function( viewPort ) {
 
     var sceneEl  = viewPort.sceneEl;
     var normalizeParams = {};  
+    var container = viewPort.container;
+    var pointContainer =  viewPort.pointContainer;
+    var boundingSphereContainer = viewPort.boundingSphereContainer;
     var fileData = viewPort.fileData;
-    var splImageContainer = viewPort.splImageContainer;
-    var textureInfos = [];
+    //var confirm = null;
+    var noExtraFeatures = 0;
     //init GUI
+    //var gui = new dat.GUI({ width: 275, closeOnTop:true, name:'Upload File' } );
     var loader = document.createElement('div');
     loader.setAttribute('class','loading');
     loader.style.display='none';
     sceneEl.appendChild(loader);
     
 
+
+    // var overlay = document.createElement('div');
+    // overlay.setAttribute('id','overlay');
+    // overlay.style.display='none';
+   // sceneEl.appendChild(overlay);
     //ERROR MESSAGE
     var errorMessageDiv = document.createElement("div"); 
     errorMessageDiv.setAttribute('class', 'errorMessageDiv');
@@ -52,6 +61,15 @@ var UploadFile = function( viewPort ) {
     });
     demoDiv.appendChild(uploadFileButton);
 
+    // //DEMO1
+    // var button = document.createElement('button');
+    // button.innerHTML = "Example One<br />(10K RNA-seq Data)";
+    // button.setAttribute('class','demoButton');
+    // button.addEventListener('click',function( ) {
+    //     demo('10k_data');
+    // });
+    // demoDiv.appendChild(button);
+    
     
     var button2 = document.createElement('button');
     button2.innerHTML = "Demo 1<br />(68K RNA-seq)";
@@ -89,7 +107,9 @@ var UploadFile = function( viewPort ) {
         })
         .then(function success(data) {  
                               // 4) display the result
-                read_csv(data)
+                var lines = data.split(/\r\n|\n/g);
+                detectFeatures(lines[0]);
+                convertToMatrix(lines);
                 sceneEl.removeChild(demoDiv);
                 sceneEl.removeChild(sloganDiv);
                 loader.style.display='none';
@@ -134,41 +154,32 @@ var UploadFile = function( viewPort ) {
         for ( var i = 0; i < keys.length ; i += 1 ) {
             var currFeature = normalizeParams[keys[i]];
             njMatrix = nj.array(currFeature.data);
-            if ( keys[i] == "X" ||  keys[i] == "Y" || keys[i] == "Z" ){
-                console.log(currFeature.max);
+            if ( keys[i] == "X" ||  keys[i] == "Y" || keys[i] == "Z" )
                 njMatrix = njMatrix.divide(currFeature.max).multiply(150);
-                console.log(njMatrix)
-            }
+                
             else njMatrix = njMatrix.subtract(currFeature.min).divide(currFeature.max-currFeature.min).multiply(0.48)
             currFeature.data = njMatrix.tolist();
        
         }
-        
       
-        prepareRenderingData(clusterRecord, keys);
+        prepareRenderingData(clusterRecord,keys);
 
         return true;
     }
 
 
-    function prepareRenderingData( clusterRecord, features ) {
+    function prepareRenderingData( clusterRecord,features ) {
  
         features.splice(features.indexOf('X'), 1);
         features.splice(features.indexOf('Y'), 1);
         features.splice(features.indexOf('Z'), 1);
         viewPort.featuresNum = features.length;
-        // console.log(clusterRecord)
-        // console.log(fileData)
-        // console.log(textureInfos.length)
-        // console.log( clusterRecord.length)
- 
+
         for (var i = 0; i < clusterRecord.length; i+=1 ) {
     
             currCluster = fileData[clusterRecord[i]];
+
             currCluster.positions.push(normalizeParams['X'].data[i],normalizeParams['Y'].data[i],normalizeParams['Z'].data[i] );
-            currCluster.textureInfo.push(textureInfos[i]);
-
-
             for ( var feature of features) {
                 //console.log(feature);
                 if(clusterRecord[i] != -1) {
@@ -208,7 +219,11 @@ var UploadFile = function( viewPort ) {
             errorMessage.innerHTML = 'File must contain required Attributes: ' + errorMessage.innerHTML;
             return false;
         }
+        // var realHeaderList = [];
 
+        // for ( var i = 0 ; i < headerList.length ; i += 1 ) {
+
+        // }
         for( var i = 0 ; i < headerList.length ; i += 1 ) {
             var currFeature = headerList[i];
             if( currFeature.length == 0 || currFeature == '""' ) continue;
@@ -259,9 +274,9 @@ var UploadFile = function( viewPort ) {
         
         loader.style.display='block';
         fileData = viewPort.fileData = {};
+        noExtraFeatures = 0;
         var inputFile = evt.target.files[0];
         var reader = new FileReader();
-        //read csv or txt file directly
         if (evt.target.files[0].name.split('.').pop().toLowerCase() != 'zip'){
          
             normalizeParams = {};  
@@ -281,130 +296,49 @@ var UploadFile = function( viewPort ) {
             reader.readAsText(inputFile);
 
         }else{
-
             reader.addEventListener( 'load', function ( event ) {	
                 var contents = event.target.result;
                 var count = 0;
                 var zip = new JSZip( );
                 zip.loadAsync(contents).then(function (zip) {
                     var keys = Object.keys(zip.files);
+                    var newKeys = keys.slice();
                 
-       
-                    fileType = ''
-                    mainFileName = ''
                     for (var key of keys) {
-                        var fileExtension = key.split('.').pop();
-                        if( fileExtension == 'txt' || fileExtension == 'csv' ){
-                            fileType = 'csv';
-                            mainFileName = key;
-                            break;
-                        }
-                        else if ( fileExtension == 'spl' ){
-                            fileType = 'spl';
-                            mainFileName = key;
-                            break;
-
-                        }
-                        else if ( fileExtension == 'ato' ){
-                            fileType = 'ato';
-                            mainFileName = key;
-                            break;
-                        }
+                        if (key.includes('__MACOSX/')) newKeys.splice( newKeys.indexOf(key),1);
                     }
-                    
-                        
-                    if( fileExtension == '' ){
-                        errorMessage.innerHTML = 'File extension is not supported.';
-                            loader.style.display='none';
-                            uploadFileField.value = '';  
+
+                    //console.log(newKeys)
+                    if ( newKeys.length > 1 ) {
+                        errorMessage.innerHTML = 'Number of files in a .zip must be equal to one.';
+                        loader.style.display='none';
+                        uploadFileField.value = '';  
+                       
                     }
-                    
+                    else{  
+                        var fileExtension = keys[0].split('.').pop();
+                        if( fileExtension != 'txt' && fileExtension != 'csv' ){
+                            errorMessage.innerHTML = 'File extension is not supported.';
+                                loader.style.display='none';
+                                uploadFileField.value = '';  
+                        }
+                        else{
+                            zip.files[keys[0]].async('string').then(function (data) {
+                                lines = data.split(/\r\n|\n/g);
 
-                    else{
-                        
-                        if (fileType == 'spl'){
-                            var splImage =  splImageContainer.object3D.children[0]
-                            zip.files[mainFileName].async('string').then(function (data) {
-                                var uploaded = read_csv(data)
-                                var image_size = ''
-                                Object.keys(zip.files).forEach(function (filename) {
-                                    if (filename.includes('.jpg')|| filename.includes('.jpeg')){
-                                        image_size = filename.split(".")[0].split("_");
-                                        var height = parseFloat(image_size[1]);
-                                        var width = parseFloat(image_size[0]);
-                                        width = width/normalizeParams.X.max*150
-                                        height = height/normalizeParams.Y.max*150
-                                        var z = normalizeParams.Z.max*150
-                                        console.log((width/2).toString()+" "+(height/2).toString()+" "+z.toString())
-                                        splImageContainer.setAttribute('height',height.toString());
-                                        splImageContainer.setAttribute('width',width.toString());
-                                        splImageContainer.setAttribute('position',(width/2).toString()+" "+(height/2).toString()+" "+(z-1).toString() );
-                                        splImageContainer.setAttribute('visible',true);
-
-                                        zip.files[filename].async('base64').then(function (content) {
-                                            
-                                            content =  "data:image/png;base64," + content;
-                                            var texture  = THREE.ImageUtils.loadTexture( content );
-
-                                            texture.flipY = false;
-                                            splImage.material = new THREE.MeshBasicMaterial( {  map: texture, color: 0xffffff, side: THREE.DoubleSide } )
-                                            splImage.material_needsUpdate = true;
-                                            if (uploaded) fileUploaded();
-                                            loader.style.display='none';
-                                            uploadFileField.value = '';   
-                                            
-                                        })
+                                if (detectFeatures(lines[0])){
+                                    if(convertToMatrix(lines)){
+                                        fileUploaded();
                                     }
-                                })
+                                }
 
-                            })
-
-                        }
-                        else if (fileType == "csv"){
-                            zip.files[mainFileName].async('string').then(function (data) {
-                                var uploaded = read_csv(data)
-                                if (uploaded) fileUploaded();
                                 loader.style.display='none';
                                 uploadFileField.value = '';   
             
                             });
-                            
-                        }
-                        else if (fileType == 'ato'){
-                            var splImage =  splImageContainer.object3D.children[0]
-                            zip.files[mainFileName].async('string').then(function (data) {
-                        
-                                var image_size = ''
-                                var imglen = Object.keys(zip.files).length-1;
-                                var counter = 0;
-                                console.log(imglen)
-                                Object.keys(zip.files).forEach(function (filename) {
-                                    if (filename.includes('.jpg') || filename.includes('.jpeg')){
-                                        image_size = filename.split(".")[0].split("_");
-                                        
-                                        zip.files[filename].async('base64').then(function (content) {
-                                            counter += 1;
-                                            content =  "data:image/png;base64," + content;
-                                            textureInfos.push(content);
-                                            if(counter == imglen){
-                                                var uploaded = read_csv(data)
-                                                if (uploaded) fileUploaded();
-                                                loader.style.display='none';
-                                                uploadFileField.value = '';   
-                            
-                                            }
-                                            
-                                            console.log(counter)
-                                        })
-                                    }
-                                })
-
-                            })
-
                         }
 
                     }
-
        
                     
                 });
@@ -420,19 +354,7 @@ var UploadFile = function( viewPort ) {
         }
     };
     
-    var read_csv = function(data){
-
-        lines = data.split(/\r\n|\n/g);
-        if (detectFeatures(lines[0])){
-            if(convertToMatrix(lines)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
+    //gui.add(uploadFileParams,'loadFile').name('Load CSV file');
 
 
     var fileUploaded = function (){
@@ -458,20 +380,20 @@ var UploadFile = function( viewPort ) {
 
 };
 
-    // console.log(headerRow)
-    function CSVtoArray(text) {
-        var p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
-        for (l in text) {
-            l = text[l];
-            if ('"' === l) {
-                if (s && l === p) row[i] += l;
-                s = !s;
-            } else if (',' === l && s) l = row[++i] = '';
-            else if ('\n' === l && s) {
-                if ('\r' === p) row[i] = row[i].slice(0, -1);
-                row = ret[++r] = [l = '']; i = 0;
-            } else row[i] += l;
-            p = l;
+       // console.log(headerRow)
+        function CSVtoArray(text) {
+            var p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
+            for (l in text) {
+                l = text[l];
+                if ('"' === l) {
+                    if (s && l === p) row[i] += l;
+                    s = !s;
+                } else if (',' === l && s) l = row[++i] = '';
+                else if ('\n' === l && s) {
+                    if ('\r' === p) row[i] = row[i].slice(0, -1);
+                    row = ret[++r] = [l = '']; i = 0;
+                } else row[i] += l;
+                p = l;
+            }
+            return ret;
         }
-        return ret;
-    }

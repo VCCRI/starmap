@@ -89,7 +89,6 @@ HighDemDetail.prototype = {
             if( this.pointsEl.components[cluster].id == undefined ) continue;
             var id = cluster.replace( 'mpoints__','');
             var hiddenPoints = points[id];
-            console.log(hiddenPoints)
             currIndex = this.pointsEl.components[cluster].hidePoints(hiddenPoints, this.spritePool,this.dumyPool, currIndex, quaternion);
             
         }

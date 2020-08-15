@@ -37,6 +37,7 @@ var KeyboardControl = function(viewPort){
     this.outlier  = this.viewPort.outlierEl.object3D;
     this.axis = this.viewPort.axis.axisEl.object3D;
     this.boundingSphere = this.viewPort.boundingSphereContainer.object3D;
+    this.splImage = this.viewPort.splImageContainer.object3D;
     this.container = this.viewPort.container;
     
     this.unitVector = new THREE.Vector3( 0, 1, 0 );
@@ -64,7 +65,7 @@ KeyboardControl.prototype = {
         var outlier = scope.outlier.children[0];
         var spritePool = scope.viewPort.highDemDetail.spritePool;
         var dumyPool = scope.viewPort.highDemDetail.dumyPool;
-
+        var splImage = scope.splImage;
         
         
         
@@ -167,7 +168,7 @@ KeyboardControl.prototype = {
                 var direction = camera.getWorldDirection();
                 var angle = Math.PI / 2;
                 direction.applyAxisAngle( scope.unitVector, angle );
-				var len = Math.sqrt(direction.x*direction.x + direction.z*direction.z);
+								var len = Math.sqrt(direction.x*direction.x + direction.z*direction.z);
                 cameraWrapper.position.x -= direction.x*scope.MOVESPEED/len;
                 cameraWrapper.position.z -= direction.z*scope.MOVESPEED/len;
                 map = {};
@@ -179,7 +180,7 @@ KeyboardControl.prototype = {
                 var direction = camera.getWorldDirection();
                 var angle = Math.PI / 2;
                 direction.applyAxisAngle( scope.unitVector, angle );
-				var len = Math.sqrt(direction.x*direction.x + direction.z*direction.z);
+								var len = Math.sqrt(direction.x*direction.x + direction.z*direction.z);
                 cameraWrapper.position.x += direction.x*scope.MOVESPEED/len;
                 cameraWrapper.position.z += direction.z*scope.MOVESPEED/len;
                 map = {};
@@ -206,7 +207,7 @@ KeyboardControl.prototype = {
 
             // zoom in
             else if(map[81]){
-
+                if (splImage.visible == true) return;
                 var newScale = preScale + scope.SCALESPEED;
                 
                 if( newScale > scope.MAXSCALE ) return;
@@ -226,7 +227,7 @@ KeyboardControl.prototype = {
             }
             // zoom out
             else if(map[69]){
-
+                if (splImage.visible == true) return;
                 var newScale = preScale - scope.SCALESPEED;
                 if( newScale < scope.MINSCALE ) return;
                 for (var i = 0; i<  points.children.length; i ++ ){
@@ -235,6 +236,8 @@ KeyboardControl.prototype = {
                 if( outlier != undefined ) outlier.scale.set(newScale,newScale,newScale);
                 boundingSphere.scale.set(newScale,newScale,newScale);
                 axis.scale.set(newScale,newScale,newScale);
+                
+               
                 setSpriteScale(spritePool, dumyPool, preScale, newScale );
                 //spritePool.scale.set(newScale,newScale,newScale);
                 preScale = newScale;

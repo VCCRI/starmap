@@ -1,6 +1,8 @@
 var Points =  function () {
     
     this.positions = [];
+    this.index = [];
+    this.textureInfo = [];
     this.color ='';
     this.features = {};
     this.boundingSphere = {};
@@ -16,16 +18,19 @@ Points.prototype = {
     
     getSurrendingPoints : function ( threshhold, p ) {
         var l = [];
+
         for( var index = 0; index< this.positions.length; index += 3 ) {
              
-             var x0 = this.positions[index];
-             var y0 = this.positions[index+1];
-             var z0 = this.positions[index+2];
-             var newPoint = { x:x0, y:y0, z:z0, i:index/3, f:[], d:this.calculateDistance(x0, y0, z0, p) };
-             for ( var value of Object.values(this.features)) {
-                 newPoint.f.push(value[index/3]);
-             }
-             
+            var x0 = this.positions[index];
+            var y0 = this.positions[index+1];
+            var z0 = this.positions[index+2];
+ 
+            var newPoint = { x:x0, y:y0, z:z0, i:index/3, f:[], d:this.calculateDistance(x0, y0, z0, p),t:this.textureInfo[index/3]};
+
+            for ( var value of Object.values(this.features)) {
+                newPoint.f.push(value[index/3]);
+            }
+
              
             if( Math.abs(x0-p.x) <= threshhold && Math.abs(y0-p.y)<=threshhold && Math.abs(z0-p.z) <= threshhold ) {
                 
