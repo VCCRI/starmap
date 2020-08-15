@@ -12,6 +12,7 @@ var VrControl = function( viewPort ) {
         this.MAXSCALE = 8;
         this.MINSCALE = 0.5;
         this.timeThreshold = 20;
+
 }
   VrControl.prototype = {
     
@@ -32,6 +33,7 @@ var VrControl = function( viewPort ) {
 
         var spritePool = scope.viewPort.highDemDetail.spritePool;
         var dumyPool = scope.viewPort.highDemDetail.dumyPool;
+        var splImage = scope.viewPort.splImageContainer.object3D;
   
         
         var onkeydown = function( e ) {
@@ -237,6 +239,7 @@ var VrControl = function( viewPort ) {
             }
             
             else if(map[85] && scope.preKey != 85 ){ // a zoom in 
+                if (splImage.visible == true) return;
                 if ( preScale + scope.SCALESPEED < scope.MAXSCALE) {
                     if(scope.preKey != 0 && scope.tween ) scope.tween.stop();
                     scope.tween = new TWEEN.Tween()
@@ -275,6 +278,7 @@ var VrControl = function( viewPort ) {
                 map = {};
             }
              else if(map[72] && scope.preKey != 72 ){ // h zoom out
+                if (splImage.visible == true) return;
                 if ( preScale + scope.SCALESPEED > scope.MINSCALE) {
                     if(scope.preKey != 0 && scope.tween ) scope.tween.stop();
                     scope.tween = new TWEEN.Tween()

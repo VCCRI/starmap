@@ -22,10 +22,6 @@ AFRAME.registerComponent('mpoints', {
       type:'string',
       default:"image/ball.png"
     },
-    textureInfo:{
-      type:'array',
-      default: []
-    },
     sizeAttenuation:{
       type:'boolean',
       default: true
@@ -179,27 +175,12 @@ AFRAME.registerComponent('mpoints', {
   
   drawFeatures: function ( currSprite, currPoint ) {
     
-  
+     
     var lineVertices = [];
     
     var feature = currPoint.f;
-    console.log(currPoint.t);
-    if (currPoint.t != undefined){
-    var texture  = THREE.ImageUtils.loadTexture( currPoint.t );
-      currSprite.material.map = texture;
-      currSprite.material_needsUpdate = true;
-      currSprite.children[0].visible = false;
-      return;
-    }else{
-      currSprite.material.map = new THREE.TextureLoader().load('image/features/' + this.data.featuresNum + '.png');
-      currSprite.material_needsUpdate = true;
-    }
- 
-
-
     var positionAttribute  = currSprite.children[0].geometry.attributes.position;
     var positionArray = positionAttribute.array;
-    console.log(currSprite.children[0].material)
     
     var preCoor = this.calculatePointCoor2(feature[0],0);
     var starCoor = {x:preCoor.x,y:preCoor.y,z:preCoor.z};

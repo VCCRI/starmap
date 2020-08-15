@@ -118,6 +118,7 @@ AFRAME.registerComponent('keyboardcontrol', {
 
             // SCALE UP
             else if(map[81]){
+                console.log(container.object3D);
                 var scale = container.getAttribute("scale");
                 var newScale = scale.x + data.scaleSpeed;
                 var newCoor = newScale+" "+newScale+" "+newScale;
@@ -126,11 +127,13 @@ AFRAME.registerComponent('keyboardcontrol', {
             }
             // SCALE DOWN
             else if(map[69]){
+                console.log("asfsdaf");
                 var scale = container.getAttribute("scale");
                 if(scale.x <= 0.5) return;
                 var newScale = scale.x - data.scaleSpeed;
                 var newCoor = newScale+" "+newScale+" "+newScale;
                 container.setAttribute("scale",newCoor);
+              
                 map = {};
             }
         
